@@ -1,17 +1,12 @@
-FROM ghcr.io/ggml-org/llama.cpp:server
+FROM python:3.12-slim
 
-RUN apt-get update && apt-get install -y --no-install-recommends python3 python3-pip \
-    && pip install --no-cache-dir --break-system-packages pydantic \
-    && rm -rf /var/lib/apt/lists/*
+RUN pip install --no-cache-dir fastapi uvicorn pydantic
 
 WORKDIR /app
 
 COPY scripts/ scripts/
 COPY schemas/ schemas/
-COPY models/*.gguf models/
 
-ENV PATH="/app:${PATH}"
+EXPOSE 8080
 
-EXPOSE 8776
-
-ENTRYPOINT ["python3", "scripts/fix_json.py"]
+CMD ["uvicorn", "scripts.server:app", "--host", "0.0.0.0", "--port", "8080"]

@@ -1,0 +1,7 @@
+FROM ghcr.io/ggml-org/llama.cpp:server
+
+COPY models/*.gguf /models/
+
+EXPOSE 8776
+
+CMD ["--model", "/models/qwen2.5-coder-1.5b-instruct-q5_k_m.gguf", "--host", "0.0.0.0", "--port", "8776", "-t", "4", "-c", "4096", "--temp", "0"]

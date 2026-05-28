@@ -1,9 +1,38 @@
 services:
-  json-repair:
-    build: .
+  llama:
+    image: ronxldwilson/json-repair:llama
+    build:
+      context: .
+      dockerfile: Dockerfile.llama
+    platform: linux/amd64
+    deploy:
+      resources:
+        limits:
+          memory: 2g
+          cpus: "3"
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8776/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 30s
+
+  api:
+    image: ronxldwilson/json-repair:api
+    build:
+      context: .
+      dockerfile: Dockerfile
     platform: linux/amd64
     ports:
-      - "8776:8776"
-    volumes:
-      - ./data:/data
-    entrypoint: ["python3", "scripts/fix_json.py"]
+      - "8080:8080"
+    environment:
+      - LLAMA_HOST=llama
+      - LLAMA_PORT=8776
+    depends_on:
+      llama:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+          cpus: "1"
