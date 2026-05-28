@@ -1,0 +1,347 @@
+[
+  {
+    "input": "[",
+    "expected": "[]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{",
+    "expected": "{}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[1,2,3,...]",
+    "expected": "[1,2,3]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[1, 2, 3, ... ]",
+    "expected": "[1, 2, 3  ]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[1,2,3,/*comment1*/.../*comment2*/]",
+    "expected": "[1,2,3]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[1,2,3,...,9]",
+    "expected": "[1,2,3,9]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[...,7,8,9]",
+    "expected": "[7,8,9]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[..., 7,8,9]",
+    "expected": "[ 7,8,9]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[...]",
+    "expected": "[]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[ ... ]",
+    "expected": "[  ]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{...}",
+    "expected": "{}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{ ... }",
+    "expected": "{  }",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[undefined]",
+    "expected": "[null]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "/* foo */ {}",
+    "expected": " {}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{} /* foo */ ",
+    "expected": "{}  ",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{} /* foo ",
+    "expected": "{} ",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "\\n/* foo */\\n{}",
+    "expected": "\\n\\n{}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{} // comment",
+    "expected": "{} ",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "callback_123({});",
+    "expected": "{}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "callback_123([]);",
+    "expected": "[]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "callback({}",
+    "expected": "{}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "/* foo bar */ callback_123 ({})",
+    "expected": " {}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "/* foo bar */\\ncallback_123({})",
+    "expected": "\\n{}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "/* foo bar */ callback_123 (  {}  )",
+    "expected": "   {}  ",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "  /* foo bar */   callback_123({});  ",
+    "expected": "     {}  ",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "\\n/* foo\\nbar */\\ncallback_123 ({});\\n\\n",
+    "expected": "\\n\\n{}\\n\\n",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "```\\n[1,2,3]\\n```",
+    "expected": "\\n[1,2,3]\\n",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[,1,2,3]",
+    "expected": "[1,2,3]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[/* a */,/* b */1,2,3]",
+    "expected": "[1,2,3]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[, 1,2,3]",
+    "expected": "[ 1,2,3]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[ , 1,2,3]",
+    "expected": "[  1,2,3]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[1,2,3,]",
+    "expected": "[1,2,3]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[1,2,3,\\n]",
+    "expected": "[1,2,3\\n]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[1,2,3,  \\n  ]",
+    "expected": "[1,2,3  \\n  ]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[1,2,3,/*foo*/]",
+    "expected": "[1,2,3]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{},",
+    "expected": "{}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[1,2,3],",
+    "expected": "[1,2,3]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{}}",
+    "expected": "{}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[2,}",
+    "expected": "[2]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[}",
+    "expected": "[]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{]",
+    "expected": "{}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[1,2,3",
+    "expected": "[1,2,3]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[1,2,3,",
+    "expected": "[1,2,3]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[[1,2,3,",
+    "expected": "[[1,2,3]]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[2e,",
+    "expected": "[2e0]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[2e ",
+    "expected": "[2e0] ",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[-,",
+    "expected": "[-0]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[]{}",
+    "expected": "[]",
+    "source": "mangiucugna/json_repair"
+  },
+  {
+    "input": "{\"name\": \"John\", \"age\": 30, \"city\": \"New York\"}",
+    "expected": "{",
+    "source": "mangiucugna/json_repair"
+  },
+  {
+    "input": "{\"employees\":[\"John\", \"Anna\", \"Peter\"]} ",
+    "expected": "{",
+    "source": "mangiucugna/json_repair"
+  },
+  {
+    "input": "{\"key\": \"value:value\"}",
+    "expected": "{",
+    "source": "mangiucugna/json_repair"
+  },
+  {
+    "input": "{\"text\": \"The quick brown fox,\"}",
+    "expected": "{",
+    "source": "mangiucugna/json_repair"
+  },
+  {
+    "input": "{\"text\": \"The quick brown fox won\\'t jump\"}",
+    "expected": "{",
+    "source": "mangiucugna/json_repair"
+  },
+  {
+    "input": "{\"key\": \"\"",
+    "expected": "{",
+    "source": "mangiucugna/json_repair"
+  },
+  {
+    "input": "{\"key1\": {\"key2\": [1, 2, 3]}}",
+    "expected": "{",
+    "source": "mangiucugna/json_repair"
+  },
+  {
+    "input": "{\"key\": 12345678901234567890}",
+    "expected": "{",
+    "source": "mangiucugna/json_repair"
+  },
+  {
+    "input": "{\"key\": \"value\\u263a\"}",
+    "expected": "{",
+    "source": "mangiucugna/json_repair"
+  },
+  {
+    "input": "{\"key\": \"value\\\\nvalue\"}",
+    "expected": "{",
+    "source": "mangiucugna/json_repair"
+  },
+  {
+    "input": "[]{\"key\":\"value\"}",
+    "expected": "{",
+    "source": "mangiucugna/json_repair"
+  },
+  {
+    "input": "{\"key\":\"value\"}[1,2,3,True]",
+    "expected": "[{",
+    "source": "mangiucugna/json_repair"
+  },
+  {
+    "input": "lorem ```json {\"key\":\"value\"} ``` ipsum ```json [1,2,3,True] ``` 42",
+    "expected": "[{",
+    "source": "mangiucugna/json_repair"
+  },
+  {
+    "input": "[{\"key\":\"value\"}][{\"key\":\"value_after\"}]",
+    "expected": "[{",
+    "source": "mangiucugna/json_repair"
+  },
+  {
+    "input": "{\"key\": true, \"key2\": false, \"key3\": null}",
+    "expected": "{",
+    "source": "mangiucugna/json_repair"
+  },
+  {
+    "input": "{\"key\": true, \"key2\": false, \"key3\": }",
+    "expected": "{",
+    "source": "mangiucugna/json_repair"
+  },
+  {
+    "input": "{'test_中国人_ascii':'统一码'}",
+    "expected": "{",
+    "source": "mangiucugna/json_repair"
+  },
+  {
+    "input": "{\"key\": \"val\\\\",
+    "expected": "{",
+    "source": "mangiucugna/json_repair"
+  },
+  {
+    "input": "{\"key\": \"val\\\\n",
+    "expected": "{",
+    "source": "mangiucugna/json_repair"
+  },
+  {
+    "input": "{\"key\": \"val\\\\n123,`key2:value2",
+    "expected": "{",
+    "source": "mangiucugna/json_repair"
+  },
+  {
+    "input": "{\"key\": \"val\\\\n123,`key2:value2`\"}",
+    "expected": "{",
+    "source": "mangiucugna/json_repair"
+  }
+]
