@@ -5,6 +5,13 @@ import re
 
 
 def _replace_single_quotes(t: str) -> str:
+    """Convert single-quoted strings to double-quoted, including escaped single quotes.
+
+    Examples:
+        {'key': 'value'}    → {"key": "value"}
+        {"a":\\'foo\\'}       → {"a":"foo"}
+        'India\\'s best'    → "India's best"
+    """
     result = []
     i = 0
     in_double = False
@@ -76,6 +83,12 @@ def _replace_single_quotes(t: str) -> str:
 
 
 def _fix_closing_quotes(t: str) -> str:
+    """Add missing closing quotes on string values at end of line.
+
+    Examples:
+        "key": "value   → "key": "value"
+        "name": "John   → "name": "John"
+    """
     lines = t.split('\n')
     fixed = []
     for line in lines:
@@ -91,6 +104,12 @@ def _fix_closing_quotes(t: str) -> str:
 
 
 def _escape_control_chars(t: str) -> str:
+    """Escape raw control characters inside JSON strings (newlines, tabs, etc).
+
+    Examples:
+        {"key": "line1\\nline2"}  → {"key": "line1\\\\nline2"}  (real newline → \\n)
+        {"key": "tab\\there"}     → {"key": "tab\\\\there"}      (real tab → \\t)
+    """
     result = []
     in_string = False
     i = 0
@@ -124,6 +143,13 @@ def _escape_control_chars(t: str) -> str:
 
 
 def _strip_comments(t: str) -> str:
+    """Remove // line comments and /* block comments */ outside of strings.
+
+    Examples:
+        {"a": 1} // comment       → {"a": 1}
+        {"a": /* inline */ 1}      → {"a":  1}
+        {"a": "has // inside"}     → {"a": "has // inside"}  (strings untouched)
+    """
     result = []
     i = 0
     in_string = False
@@ -157,6 +183,15 @@ def _strip_comments(t: str) -> str:
 
 
 def _fix_multiline_strings(t: str) -> str:
+    """Join multiline string values into single-line with \\n escapes.
+
+    Detects string values that span multiple lines (missing closing quote) and
+    joins continuation lines with literal \\n until a closing quote or next key is found.
+
+    Example:
+        "desc": "line one        → "desc": "line one\\nline two"
+        line two"
+    """
     lines = t.split('\n')
     result = []
     i = 0
@@ -198,6 +233,12 @@ def _fix_multiline_strings(t: str) -> str:
 
 
 def _quote_leading_zero_numbers(t: str) -> str:
+    """Quote numbers with leading zeros as strings (string-aware, skips content inside strings).
+
+    Examples:
+        {"zip": 0789}          → {"zip": "0789"}
+        {"price": "₹78,000"}   → {"price": "₹78,000"}  (inside string, untouched)
+    """
     pat = re.compile(r'(?<![.\d\w"])0(\d[\d.eE+\-]*)')
     result = []
     in_str = False
@@ -233,6 +274,16 @@ def _quote_leading_zero_numbers(t: str) -> str:
 
 
 def _fix_numbers(t: str) -> str:
+    """Normalize non-standard number formats to valid JSON numbers or strings.
+
+    Examples:
+        .75            → 0.75       (leading decimal)
+        2.             → 2.0        (trailing decimal)
+        1_000          → 1000       (underscore separators)
+        0x1F           → 31         (hex literals)
+        0789           → "0789"     (leading-zero → quoted string)
+        Infinity / NaN → null
+    """
     t = re.sub(r'(?<![.\d])\.([\d])', r'0.\1', t)
     t = re.sub(r'(\d)\.(?=[,\s\]\}\)]|$)', r'\g<1>.0', t)
     while True:
@@ -249,6 +300,12 @@ def _fix_numbers(t: str) -> str:
 
 
 def _strip_ellipsis(t: str) -> str:
+    """Remove ellipsis (...) outside of strings.
+
+    Examples:
+        [1, 2, 3, ...]   → [1, 2, 3, ]
+        {"a": "text..."}  → {"a": "text..."}  (inside string, untouched)
+    """
     result = []
     in_str = False
     i = 0
@@ -275,6 +332,15 @@ def _strip_ellipsis(t: str) -> str:
 
 
 def _close_truncated_strings(t: str) -> str:
+    """Add missing closing quote to a string that was truncated at end of input.
+
+    Handles trailing backslashes correctly (odd count = dangling escape, strip it).
+
+    Examples:
+        {"key": "value     → {"key": "value"}
+        {"key": "val\\\\    → {"key": "val\\\\"}   (even backslashes, just close)
+        {"key": "val\\     → {"key": "val"}      (odd backslash stripped, then close)
+    """
     in_str = False
     i = 0
     while i < len(t):
@@ -302,6 +368,12 @@ def _close_truncated_strings(t: str) -> str:
 
 
 def _strip_bare_escapes(t: str) -> str:
+    """Remove bare backslash-escape sequences (\\x) that appear outside of strings.
+
+    Examples:
+        [1, 2\\n]        → [1, 2]      (bare \\n outside string removed)
+        {"a": "b\\nc"}   → {"a": "b\\nc"}  (inside string, untouched)
+    """
     result = []
     in_str = False
     i = 0
@@ -328,6 +400,20 @@ def _strip_bare_escapes(t: str) -> str:
 
 
 def _is_structural_quote(t: str, pos: int) -> bool:
+    """Determine if a quote at position `pos` is a structural delimiter (not inner content).
+
+    Used by _fix_unquoted_inner_quotes to decide whether a " inside a string is the
+    real closing quote or an unescaped inner quote that should be escaped.
+
+    Returns True if what follows the quote looks like valid JSON structure:
+    comma, closing bracket, colon, newline, another key-value pair, etc.
+
+    Examples (returns True):
+        "value",     → comma follows
+        "value"}     → closing brace follows
+        "value"\\n   → newline follows (next key on new line)
+        "val"key":   → bare key pattern follows (missing opening quote on key)
+    """
     raw_after = t[pos + 1:]
     after = raw_after.lstrip()
     if not after:
@@ -360,6 +446,21 @@ def _is_structural_quote(t: str, pos: int) -> bool:
 
 
 def _fix_missing_open_quotes(t: str) -> str:
+    """Fix bare words before a closing quote where the opening quote is missing.
+
+    String-aware — only processes bare words outside of quoted strings.
+    Handles three patterns:
+      1. Key position: bare word after closing quote, followed by ":
+      2. Value position: bare word after : or , with a closing quote nearby
+      3. Bare prefix: bare word glued to a quoted string (merged into it)
+
+    Examples:
+        [a","b"]              → ["a","b"]           (missing opening quote)
+        {a":"foo","b":"bar"}  → {"a":"foo","b":"bar"}
+        {"a":foo","b":"bar"}  → {"a":"foo","b":"bar"}
+        {"a":"b,"c":"d"}      → {"a":"b","c":"d"}   (comma split + key fix)
+        {"this": h"that"}     → {"this": "hthat"}   (bare prefix merged)
+    """
     result = []
     i = 0
     in_str = False
@@ -419,6 +520,17 @@ def _fix_missing_open_quotes(t: str) -> str:
 
 
 def _fix_unquoted_inner_quotes(t: str) -> str:
+    """Escape double quotes that appear inside string values (unquoted inner quotes).
+
+    Only processes strings that open after a structural character (: { [ ,).
+    Uses _is_structural_quote to decide whether each inner " is a real closing
+    quote or content that should be escaped.
+
+    Examples:
+        ["some "quoted" text"]                    → ["some \\"quoted\\" text"]
+        {"test": "some "quoted" text"}            → {"test": "some \\"quoted\\" text"}
+        {"claim": ""this is a test" of space"}    → {"claim": "\\"this is a test\\" of space"}
+    """
     result = []
     i = 0
     while i < len(t):
@@ -460,6 +572,18 @@ def _fix_unquoted_inner_quotes(t: str) -> str:
 
 
 def _quote_bare_words(t: str) -> str:
+    """Quote unquoted bare words in value positions as strings.
+
+    String-aware — skips content inside quoted strings. Only quotes words that
+    appear after a structural character (: , [). Preserves JSON literals
+    (true, false, null). Supports hyphenated words like "cool-cat".
+
+    Examples:
+        [a, b]               → ["a", "b"]
+        {"this": that}       → {"this": "that"}
+        {"test": cool-cat}   → {"test": "cool-cat"}
+        [true, false]        → [true, false]  (literals preserved)
+    """
     result = []
     i = 0
     in_str = False
@@ -499,6 +623,17 @@ def _quote_bare_words(t: str) -> str:
 
 
 def _auto_close_brackets(t: str) -> str:
+    """Close unclosed brackets/braces and fix mismatched bracket types.
+
+    Tracks a stack of expected closing characters. Mismatched closers are
+    corrected (} inside [] becomes ], and vice versa). Unclosed openers
+    get their matching closer appended at the end.
+
+    Examples:
+        {"a": [1, 2}     → {"a": [1, 2]}    (} inside [] → ])
+        {"a": 1           → {"a": 1}         (missing closing brace)
+        [1, 2, 3          → [1, 2, 3]        (missing closing bracket)
+    """
     result = []
     stack = []
     in_str = False
@@ -536,7 +671,29 @@ def _auto_close_brackets(t: str) -> str:
 
 
 def deterministic_repair(text: str) -> str:
-    """Fast regex/string-based repair for common JSON errors."""
+    """Fast regex/string-based repair for common JSON errors.
+
+    Applies a sequence of targeted fixes in a specific order:
+      1. Strip markdown fences, JSONP wrappers, preamble text
+      2. Wrap bare words as strings (abc → "abc")
+      3. Fix unquoted inner quotes and missing opening quotes
+      4. Convert single quotes to double quotes (handles escaped \\' too)
+      5. Strip comments (// and /* */)
+      6. Remove ellipsis, join string concatenation ("a" + "b" → "ab")
+      7. Quote unquoted keys and numeric keys ({key: 1} → {"key": 1})
+      8. Insert missing colons between keys and values
+      9. Quote bare words in value positions ({a: that} → {"a": "that"})
+     10. Insert null for empty values ({"key": } → {"key": null})
+     11. Insert missing commas between elements
+     12. Insert missing } between adjacent objects ([{"i":1{"i":2}] fix)
+     13. Fix number formats (.75, 0x1F, 1_000, Infinity, NaN, etc.)
+     14. Escape control chars, fix backslashes, strip bare escapes
+     15. Close truncated strings, auto-close brackets, fix mismatched types
+     16. Remove trailing/leading commas
+
+    Returns the repaired string. Does NOT guarantee valid JSON for all inputs —
+    the LLM tiers handle cases too ambiguous for heuristics.
+    """
     t = text.strip()
 
     t = re.sub(r'^```(?:json)?\s*\n?', '', t)
@@ -678,6 +835,15 @@ def deterministic_repair(text: str) -> str:
 
 
 def resolve_refs(schema: dict) -> dict:
+    """Inline $defs/$ref references in a JSON Schema so it's self-contained.
+
+    Resolves Pydantic-style schemas where nested models are in $defs and
+    referenced via $ref pointers. Mutates and returns the input schema.
+
+    Example:
+        {"$defs": {"Addr": {"type": "object"}}, "properties": {"addr": {"$ref": "#/$defs/Addr"}}}
+        → {"properties": {"addr": {"type": "object"}}}
+    """
     defs = schema.pop("$defs", None) or schema.pop("definitions", None) or {}
     if not defs:
         return schema
@@ -698,6 +864,12 @@ def resolve_refs(schema: dict) -> dict:
 
 
 def validate_against_schema(json_str: str, schema: dict | None) -> bool:
+    """Check if a JSON string parses and validates against an optional JSON Schema.
+
+    Returns True if valid JSON (and schema validates if provided). Returns True
+    if jsonschema is not installed (graceful degradation). Returns False on
+    parse errors or validation failures.
+    """
     try:
         parsed = json.loads(json_str)
     except (json.JSONDecodeError, ValueError):
@@ -715,6 +887,17 @@ def validate_against_schema(json_str: str, schema: dict | None) -> bool:
 
 
 def coerce_schema_errors(json_str: str, schema: dict) -> str | None:
+    """Fix type mismatches by coercing values to match the schema's expected types.
+
+    Parses the JSON, runs schema validation, then surgically fixes each type error:
+    int→str, str→int, str→bool, non-array→[wrapped], etc. Returns the fixed JSON
+    string if all errors were resolved, or None if coercion wasn't possible.
+
+    Examples:
+        {"age": "30"} with schema expecting integer  → {"age": 30}
+        {"active": "true"} with schema expecting bool → {"active": true}
+        {"tags": "one"} with schema expecting array   → {"tags": ["one"]}
+    """
     try:
         from jsonschema import Draft202012Validator
     except ImportError:
