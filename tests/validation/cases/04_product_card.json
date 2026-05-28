@@ -1,0 +1,30 @@
+{
+  "vendor": "Supreme Industries Ltd."
+  "product": "Supreme CPVC Pipes - SDR 11"
+  "specs": {
+    "Material": "CPVC Compound"
+    "Standard": "IS 15778:2007"
+    "Size Range": "15mm - 50mm"
+    "Pressure Rating": "28 kg/cm² at 27°C"
+    "Max Temp": "93°C continuous"
+    "Color": "Light Grey"
+  }
+  "description": "Supreme CPVC pipes are designed for hot and cold water plumbing in residential and commercial buildings. They feature excellent chemical resistance and do not support bacterial growth, making them ideal for potable water systems.
+  "price_range": "₹185/meter (25mm)"
+  "price_reasoning": "IndiaMART quotes range ₹160-210/meter depending on dealer. Supreme official distributor at ₹185/meter (25mm dia). Plumbing wholesale market in Mumbai at ₹170/meter (bulk 500m+). Used official distributor price.
+  "price_source_url": "https://www.supreme.co.in/cpvc-plumbing-system"
+  "availability": "Ready Stock"
+  "warranty": None
+  "moq": "100 meters"
+  "delivery": "7-10 business days"
+  "certifications": ["IS 15778:2007", "NSF Listed", "ISO 9001:2015", "IGBC Certified Green Product",]
+  "email": "pipes@supreme.co.in"
+  "phone": "+91-22-2580-9111"
+  "manufacturer_info": "Supreme Industries Ltd., India's largest plastic processor with 26 plants. Established in 1942, pioneer in Indian plastics industry.
+  "pros": ["Industry leader in plastic piping", "Excellent temperature resistance up to 93°C", "NSF listed for potable water safety", "Nationwide distributor network",]
+  "cons": ["Higher cost vs PVC pipes", "Requires special CPVC solvent cement for jointing", "UV sensitive - not for outdoor exposed use",]
+  "score_spec_depth": 23
+  "score_brand": 24
+  "matches_query": True
+  "product_image_urls": ["https://www.supreme.co.in/media/cpvc-pipe-grey.jpg", "https://www.supreme.co.in/media/cpvc-fittings.jpg",]
+}

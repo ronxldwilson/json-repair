@@ -1,0 +1,6 @@
+{
+  'product': 'Laptop Pro 15',
+  'price': 1299.99,
+  'in_stock': true,
+  'categories': ['electronics', 'computers']
+}

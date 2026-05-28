@@ -1,0 +1,15 @@
+{
+  "name": "Tata Steel Ltd."
+  "description": "Tata Steel is one of the world's most geographically diversified steel producers, with operations in 26 countries and a combined crude steel capacity of ~35 MTPA. Indian operations are headquartered in Jamshedpur, Jharkhand.
+  "honest_assessment": "Best-in-class for structural steel and TMT bars. Strong brand commands premium pricing (10-15% above market). Excellent quality consistency but rigid MOQ requirements. Their Tiscon brand dominates the retail rebar market. Good for large projects; small buyers may find MOQs prohibitive.
+  "business_types": ["Manufacturer", "Exporter", "Distributor",]
+  "key_products": ["TMT Bars (Tiscon)", "HR Coils", "CR Coils", "Galvanized Sheets", "Wire Rods", "Structural Steel",]
+  "years_in_business": 117
+  "certifications": ["ISO 9001:2015", "ISO 14001:2015", "SA 8000", "OHSAS 18001", "Responsible Steel Certified",]
+  "website": "https://www.tatasteel.com"
+  "address": "Bombay House, 24 Homi Mody Street, Mumbai - 400001, India"
+  "fit_score": 91.0
+  "llm_phones": ["+91-22-6665-8282", "+91-657-660-1234",]
+  "llm_landlines": ["+91-22-6665-7000",]
+  "llm_emails": ["customercare@tatasteel.com", "exports@tatasteel.com",]
+}

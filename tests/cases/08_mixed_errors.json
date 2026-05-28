@@ -1,0 +1,21 @@
+{
+  "employee": {
+    name: "Sarah Connor",
+    "department": 'Engineering',
+    "salary": 95000,
+    "is_manager": True
+    "skills": ["Python", "Rust", "Go",]
+    "projects": [
+      {
+        "name": "Phoenix"
+        "status": "active",
+        "priority": 1,
+      }
+      {
+        "name": "Titan"
+        "status": "completed",
+        "priority": 2,
+      }
+    ]
+  }
+}

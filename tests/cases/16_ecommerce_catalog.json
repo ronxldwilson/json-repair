@@ -1,0 +1,37 @@
+{
+  "store_id": "STR-001"
+  "name": "TechMart Electronics"
+  "products": [
+    {
+      "sku": "LAP-PRO-15"
+      "name": "ProBook 15,
+      "brand": 'HP',
+      "price": 1299.99
+      "in_stock": True
+      "specs": {
+        "cpu": "Intel i7-13700H"
+        "ram_gb": 16
+        "storage": "512GB SSD"
+      }
+      "variants": [
+        {"color": "Silver" "sku_suffix": "SLV",}
+        {"color": "Space Gray" "sku_suffix": "GRY",}
+      ]
+      "tags": ["laptop", "professional", "portable",]
+    }
+    {
+      "sku": "MON-UW-34"
+      "name": "UltraWide 34"
+      "brand": 'Dell',
+      "price": 699.50
+      "in_stock": False
+      "specs": {
+        "cpu": None
+        "ram_gb": None
+        "storage": None
+      }
+      "variants": []
+      "tags": ["monitor", "ultrawide",]
+    }
+  ]
+}

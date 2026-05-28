@@ -1,0 +1,6 @@
+{
+  name: "Charlie",
+  age: 28,
+  city: "London",
+  employed: true
+}

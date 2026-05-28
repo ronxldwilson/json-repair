@@ -1,0 +1,10 @@
+{
+  "name": "Test Widget",
+  "dimensions": {
+    "width": 10,
+    "height": 20,
+    "depth": 5
+  }},
+  "weight": 1.5,
+  "color": "blue"
+}

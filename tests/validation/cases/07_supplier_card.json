@@ -1,0 +1,15 @@
+{
+  'name': 'Havells India Ltd.',
+  'description': 'Havells is a leading Fast Moving Electrical Goods (FMEG) company with a strong brand presence across India. Operates 13 state-of-the-art manufacturing plants and has distribution reach to 100,000+ retail outlets.',
+  'honest_assessment': "Excellent for electrical wiring, switchgear, and consumer durables. Their cables division is the market leader. However, they've recently diversified into non-core categories (water purifiers, air coolers) where quality is inconsistent. B2B procurement should focus on their core competencies: cables, switches, and MCBs.",
+  'business_types': ['Manufacturer', 'Exporter'],
+  'key_products': ['Electrical Cables', 'MCBs and RCCBs', 'Switches and Sockets', 'LED Lighting', 'Fans', 'Water Heaters'],
+  'years_in_business': 65,
+  'certifications': ['ISI Mark', 'ISO 9001:2015', 'BASEC UK', 'CE Marked'],
+  'website': 'https://www.havells.com',
+  'address': '1600/1 Govind Puri, Kalkaji, New Delhi - 110019, India',
+  'fit_score': 85.5,
+  'llm_phones': ['+91-11-4118-1111'],
+  'llm_landlines': ['+91-11-4118-1100', '+91-11-4118-1200'],
+  'llm_emails': ['customercare@havells.com', 'b2b@havells.com']
+}

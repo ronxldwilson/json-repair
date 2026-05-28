@@ -1,0 +1,88 @@
+{
+  "restaurant": {
+    "name": "Sakura Japanese Kitchen"
+    "cuisine": 'Japanese',
+    "rating": 4.7
+    "address": {
+      "street": "789 Cherry Blossom Lane"
+      "city": "Portland"
+      "state": "OR"
+      "zip": "97201"
+    }
+  }
+  "menu": {
+    "categories": [
+      {
+        "name": "Appetizers"
+        "items": [
+          {
+            "name": "Edamame"
+            "price": 6.50
+            "description": "Steamed soybeans with sea salt"
+            "vegetarian": True
+            "spicy": False
+            "allergens": ["soy",]
+          }
+          {
+            "name": "Gyoza"
+            "price": 8.99
+            "description": "Pan-fried pork dumplings (6 pcs)"
+            "vegetarian": False
+            "spicy": False
+            "allergens": ["wheat", "soy", "sesame",]
+          }
+          {
+            "name": "Spicy Tuna Tartare"
+            "price": 14.50
+            "description": "Fresh tuna with sriracha aioli and crispy wontons"
+            "vegetarian": False
+            "spicy": True
+            "allergens": ["fish", "wheat", "soy",]
+          }
+        ]
+      }
+      {
+        "name": "Sushi Rolls"
+        "items": [
+          {
+            "name": "Dragon Roll"
+            "price": 16.99
+            "description": "Shrimp tempura, avocado, eel, tobiko"
+            "vegetarian": False
+            "spicy": False
+            "allergens": ["shellfish", "fish", "wheat", "soy",]
+          }
+          {
+            "name": "Veggie Rainbow"
+            "price": 13.50
+            "description": "Avocado, cucumber, mango, sweet potato tempura
+            "vegetarian": True
+            "spicy": False
+            "allergens": ["wheat", "soy",]
+          }
+        ]
+      }
+      {
+        "name": "Entrees"
+        "items": [
+          {
+            "name": "Chicken Teriyaki"
+            "price": 18.99
+            "description": "Grilled chicken with house teriyaki sauce, rice, vegetables"
+            "vegetarian": False
+            "spicy": False
+            "allergens": ["soy", "wheat",]
+          }
+          {
+            "name": "Tonkotsu Ramen"
+            "price": 16.50
+            "description": "Rich pork bone broth, chashu, soft egg, nori, green onions
+            "vegetarian": False
+            "spicy": False
+            "allergens": ["wheat", "soy", "egg",]
+          }
+        ]
+      }
+    ]
+  }
+}

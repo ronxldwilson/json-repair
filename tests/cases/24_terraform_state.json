@@ -1,0 +1,77 @@
+{
+  "version": 4
+  "serial": 42
+  "lineage": "abc123-def456"
+  "resources": [
+    {
+      "mode": "managed"
+      "type": "aws_instance"
+      "name": "web_server"
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]"
+      "instances": [
+        {
+          "attributes": {
+            "id": "i-0abc123def456"
+            "ami": "ami-0123456789"
+            "instance_type": "t3.medium"
+            "tags": {"Name": "web-prod-1" "Environment": "production" "Team": "platform"}
+            "vpc_security_group_ids": ["sg-abc123",]
+            "subnet_id": "subnet-xyz789"
+            "public_ip": "54.123.45.67"
+            "private_ip": "10.0.1.50"
+            "root_block_device": {
+              "volume_size": 50
+              "volume_type": "gp3"
+              "encrypted": True
+              "iops": 3000
+            }
+          }
+          "private": None
+        }
+      ]
+    }
+    {
+      "mode": "managed"
+      "type": "aws_lb"
+      "name": "main"
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]"
+      "instances": [
+        {
+          "attributes": {
+            "id": "arn:aws:elasticloadbalancing:us-east-1:123456:loadbalancer/app/main/abc"
+            "name": "main-alb"
+            "internal": False
+            "load_balancer_type": "application"
+            "subnets": ["subnet-aaa", "subnet-bbb", "subnet-ccc",]
+            "security_groups": ["sg-alb-123",]
+            "tags": {"Name": "main-alb" "Environment": "production"}
+          }
+          "private": None
+        }
+      ]
+    }
+    {
+      "mode": "managed"
+      "type": "aws_rds_cluster"
+      "name": "database"
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]"
+      "instances": [
+        {
+          "attributes": {
+            "id": "prod-aurora-cluster"
+            "engine": "aurora-postgresql"
+            "engine_version": "15.4"
+            "master_username": "admin"
+            "database_name": "appdb"
+            "port": 5432
+            "storage_encrypted": True
+            "backup_retention_period": 7
+            "preferred_backup_window": "03:00-04:00"
+            "tags": {"Name": "prod-db" "Environment": "production"}
+          }
+          "private": None
+        }
+      ]
+    }
+  ]
+}

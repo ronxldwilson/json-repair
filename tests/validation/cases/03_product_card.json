@@ -1,0 +1,30 @@
+{
+  vendor: "Bosch Power Tools India"
+  product: "Bosch GSB 600 RE Impact Drill"
+  specs: {
+    "Power": "600W"
+    "No Load Speed": "0-2800 RPM"
+    "Chuck Size": "13mm Keyed"
+    "Impact Rate": "44,800 bpm"
+    "Weight": "1.68 kg"
+    "Cable Length": "2.2 meters"
+  }
+  description: "The Bosch GSB 600 RE is a versatile impact drill suitable for drilling in wood, metal, and masonry. Features variable speed control and forward/reverse function. Popular choice among DIY enthusiasts and light professional use in India."
+  price_range: "₹3,299"
+  price_reasoning: "Amazon India ₹3,299 (official Bosch store), Flipkart ₹3,250, IndustryBuying ₹3,450. All prices within 5% range. Amazon official store price chosen."
+  price_source_url: "https://www.bosch-professional.com/in/products/gsb-600-re"
+  availability: "Ready Stock"
+  warranty: "6 months standard + 6 months on registration"
+  moq: "1 unit"
+  delivery: "3-5 business days"
+  certifications: ["CE Marked", "ISI Mark",]
+  email: "contact.pt@in.bosch.com"
+  phone: "1800-266-2000"
+  manufacturer_info: "Robert Bosch GmbH, German multinational with manufacturing plants in Bangalore and Jaipur. India operations since 1922."
+  pros: ["Reliable German engineering", "Good power-to-weight ratio", "Wide service network across India", "Affordable for branded power tool",]
+  cons: ["Keyed chuck less convenient than keyless", "Cable could be longer", "No carrying case included",]
+  score_spec_depth: 22
+  score_brand: 26
+  matches_query: True
+  product_image_urls: ["https://www.bosch-professional.com/in/media/gsb-600-re.jpg",]
+}

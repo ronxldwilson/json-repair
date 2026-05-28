@@ -1,0 +1,17 @@
+```json
+{
+  "name": "Ambuja Cements Ltd.",
+  "description": "Ambuja Cements is one of India's leading cement manufacturers, part of the Adani Group (acquired 2022). With a capacity of ~31 MTPA, it operates 6 integrated cement plants and 8 grinding stations across India.",
+  "honest_assessment": "Reliable for OPC and PPC cement in bulk. Consistent quality due to automated plants. Pricing is mid-range - 5-8% below UltraTech but 5% above local brands. Delivery logistics are excellent in western and northern India but patchy in the south. Their RMC (ready-mix concrete) division is growing fast and worth considering for large projects.",
+  "business_types": ["Manufacturer", "Distributor"],
+  "key_products": ["OPC 43 Grade", "OPC 53 Grade", "PPC (Portland Pozzolana)", "Ready Mix Concrete", "AAC Blocks"],
+  "years_in_business": 38,
+  "certifications": ["IS 269:2015", "IS 1489:2015", "ISO 9001:2015", "ISO 14001:2015", "GreenPro Certified"],
+  "website": "https://www.ambujacement.com",
+  "address": "Elegant Business Park, MIDC Cross Road B, Andheri-Kurla Road, Mumbai - 400059",
+  "fit_score": 84.0,
+  "llm_phones": ["+91-22-6616-7000", "+91-22-6616-7100"],
+  "llm_landlines": ["+91-22-6616-7200"],
+  "llm_emails": ["info@ambujacement.com", "bulk.sales@ambujacement.com"]
+}
+```

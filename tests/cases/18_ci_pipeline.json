@@ -1,0 +1,65 @@
+{
+  "pipeline": {
+    "name": "deploy-production"
+    "trigger": {
+      "branch": "main"
+      "events": ["push", "merge_request",]
+    }
+    "stages": [
+      {
+        "name": "build"
+        "jobs": [
+          {
+            "name": "compile"
+            "image": "node:20-alpine"
+            "commands": ["npm ci", "npm run build",]
+            "timeout_minutes": 15
+            "retry": {"max_attempts": 3 "delay_seconds": 30}
+            "artifacts": {
+              "paths": ["dist/", "build/",]
+              "expire_in": "1 week"
+            }
+          }
+        ]
+      }
+      {
+        "name": "test"
+        "jobs": [
+          {
+            "name": "unit-tests"
+            "image": "node:20-alpine"
+            "commands": ["npm run test:unit",]
+            "timeout_minutes": 10
+            "retry": {"max_attempts": 2 "delay_seconds": 15}
+            "artifacts": None
+          }
+          {
+            "name": "integration-tests"
+            "image": "node:20-alpine"
+            "commands": ["npm run test:integration",]
+            "timeout_minutes": 30
+            "retry": {"max_attempts": 1 "delay_seconds": 0}
+            "artifacts": None
+          }
+        ]
+      }
+      {
+        "name": "deploy"
+        "jobs": [
+          {
+            "name": "deploy-prod"
+            "image": "aws-cli:latest"
+            "commands": ["aws s3 sync dist/ s3://prod-bucket/", "aws cloudfront create-invalidation",]
+            "timeout_minutes": 20
+            "retry": {"max_attempts": 2 "delay_seconds": 60}
+            "artifacts": None
+          }
+        ]
+      }
+    ]
+    "notifications": {
+      "on_success": ["slack:#deploys",]
+      "on_failure": ["slack:#deploys", "email:oncall@company.com",]
+    }
+  }
+}

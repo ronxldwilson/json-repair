@@ -1,0 +1,52 @@
+{
+  "experiment": {
+    "id": "exp-2024-0315-bert-finetune"
+    "name": "BERT Fine-tuning for Sentiment Analysis"
+    "author": "ml-team"
+    "status": "completed"
+    "dataset": {
+      "name": "imdb-reviews"
+      "train_size": 25000
+      "val_size": 5000
+      "test_size": 5000
+      "preprocessing": ["lowercase", "remove_html", "truncate_512",]
+    }
+    "model": {
+      "architecture": "bert-base-uncased"
+      "num_parameters": 110000000
+      "frozen_layers": 8
+      "custom_head": {
+        "type": "classification"
+        "hidden_dim": 256
+        "dropout": .3
+        "num_classes": 2
+        "activation": 'gelu'
+      }
+    }
+    "hyperparameters": {
+      "learning_rate": 0.00002
+      "batch_size": 32
+      "epochs": 5
+      "warmup_steps": 500
+      "weight_decay": 0.01
+      "optimizer": "adamw"
+      "scheduler": "linear_warmup"
+      "gradient_clipping": 1.0
+      "fp16": True
+      "seed": 42
+    }
+    "results": {
+      "best_epoch": 3
+      "metrics": {
+        "train_loss": 0.1823
+        "val_loss": 0.2156
+        "val_accuracy": 0.9234
+        "val_f1": 0.9218
+        "test_accuracy": 0.9189
+        "test_f1": 0.9175
+      }
+      "confusion_matrix": [[4521, 479], [326, 4674]]
+      "training_time_hours": 2.5
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "vendor": "Confident Dental Equipments Ltd."
+  "product": "Confident Mookambika Hydraulic Dental Chair"
+  "specs": {
+    "Chair Type": "Hydraulic"
+    "Upholstery": "PU Leather"
+    "Headrest": "Adjustable, 3-axis"
+    "Backrest Recline": "0° to 70°"
+    "Seat Height Range": "480mm - 720mm"
+    "Weight Capacity": "150 kg"
+    "Spittoon": "Ceramic, rotatable"
+  }
+  "description": "The Confident Mookambika is a mid-range hydraulic dental chair popular in Indian clinics. It features a ceramic spittoon, adjustable headrest, and PU leather upholstery suitable for general dental procedures.
+  "price_range": "₹85,000"
+  "price_reasoning": "Found 3 prices: IndiaMART listing at ₹78,000 (dealer, possibly outdated), Confident official site at ₹85,000 (manufacturer list price), Amazon at ₹92,500 (includes delivery). Chose manufacturer price as most authoritative."
+  "price_source_url": "https://www.confidentdentalequipments.com/mookambika-hydraulic"
+  "availability": "Made to Order"
+  "warranty": "2 years on chair frame, 1 year on upholstery"
+  "moq": "1 unit"
+  "delivery": "15-20 business days"
+  "certifications": ["ISO 13485", "CE Marked", "BIS Certified",]
+  "email": "sales@confidentdental.com"
+  "phone": "+91-80-2839-4500"
+  "manufacturer_info": "Confident Dental Equipments Ltd. is a Bangalore-based manufacturer established in 1975, one of India's largest dental equipment companies with exports to 60+ countries.
+  "pros": ["Competitive pricing for Indian market", "Widely available spare parts and service network", "Ceramic spittoon is durable and hygienic", "Suitable for general and cosmetic dentistry",]
+  "cons": ["Hydraulic mechanism requires periodic maintenance", "No programmable positions unlike electric models", "Basic headrest compared to premium chairs",]
+  "score_spec_depth": 22
+  "score_brand": 20
+  "matches_query": True
+  "product_image_urls": ["https://www.confidentdental.com/images/mookambika-1.jpg", "https://www.confidentdental.com/images/mookambika-2.jpg",]
+}

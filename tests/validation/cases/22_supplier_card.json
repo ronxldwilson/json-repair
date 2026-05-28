@@ -1,0 +1,15 @@
+{
+  "name": "Pidilite Industries Ltd.",
+  "description": "Pidilite is India\"s leading adhesives and sealants company, best known for the Fevicol brand. Dominates the Indian adhesive market with ~70% market share in white glue and ~50% in construction chemicals. Manufacturing presence across 18 plants in India.",
+  "honest_assessment": "Absolute market leader in adhesives - Fevicol has become a generic name for glue in India. For B2B procurement (construction chemicals, industrial adhesives, waterproofing), Pidilite offers the widest product range. However, their pricing power means you pay 15-25% premium over imports. Their Dr. Fixit waterproofing range is the market standard for commercial construction. For price-sensitive industrial applications (packaging adhesives, lamination), consider alternatives like Henkel or local manufacturers. Service and technical support are excellent.",
+  "business_types": ["Manufacturer", "Exporter"],
+  "key_products": ["Fevicol (White Glue)", "Fevikwik (Cyanoacrylate)", "Dr. Fixit (Waterproofing)", "M-Seal (Epoxy)", "Fevitite (Furniture Adhesive)", "Araldite (Epoxy Resin)"],
+  "years_in_business": 65,
+  "certifications": ["ISO 9001:2015", "ISO 14001:2015", "GreenPro Certified", "IGBC Rated"],
+  "website": "https://www.pidilite.com",
+  "address": "Regent Chambers, 7th Floor, Jamnalal Bajaj Marg, 208, Nariman Point, Mumbai - 400021",
+  "fit_score": 87.0,
+  "llm_phones": ["+91-22-2491-8000", "+91-22-2491-8001"],
+  "llm_landlines": ["+91-22-2491-8500"],
+  "llm_emails": ["info@pidilite.com", "b2b.sales@pidilite.com"]
+}

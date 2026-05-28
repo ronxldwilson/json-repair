@@ -1,0 +1,29 @@
+{
+  "vendor": "Tata Steel Ltd.",
+  "product": "Tata Tiscon 550SD TMT Bar"
+  "specs": {
+    "Grade": "Fe 550D"
+    "Standard": "IS 1786:2008"
+    "Size Range": "8mm - 40mm"
+    "Rib Pattern": "Parallel Rib"
+    "Elongation": "≥14.5%"
+  }
+  "description": "Tata Tiscon 550SD is a premium TMT reinforcement bar manufactured using TEMPCORE technology. Known for its superior bendability and weldability, it is the market leader in the Indian construction industry.
+  "price_range": "₹62,500/tonne"
+  "price_reasoning": "Compared 4 dealer quotes: Mumbai dealer at ₹60,000/tonne (bulk, ex-factory), Bangalore distributor at ₹63,500/tonne (including transport), Amazon business at ₹67,000/tonne (retail), Tata official at ₹62,500/tonne. Chose official price."
+  "price_source_url": "https://www.tatasteel.com/products/tiscon-550sd"
+  "availability": "Ready Stock"
+  "warranty": "No specific warranty; conforms to IS 1786:2008"
+  "moq": "5 tonnes"
+  "delivery": "5-7 business days"
+  "certifications": ["IS 1786:2008", "ISO 9001:2015", "BIS Certified",]
+  "email": "customercare@tatasteel.com"
+  "phone": "+91-657-660-1234"
+  "manufacturer_info": "Tata Steel Ltd., established in 1907, is India's largest private sector steel company with integrated plants in Jamshedpur and Kalinganagar.
+  "pros": ["Industry-leading brand recognition", "Superior TEMPCORE technology", "Excellent bendability and earthquake resistance", "Pan-India availability",]
+  "cons": ["Premium pricing compared to local brands", "Minimum order of 5 tonnes", "Regional price variations can be significant",]
+  "score_spec_depth": 25
+  "score_brand": 28
+  "matches_query": True
+  "product_image_urls": ["https://www.tatasteel.com/media/tiscon-550sd-bar.jpg", "https://www.tatasteel.com/media/tiscon-logo.png",]
+}

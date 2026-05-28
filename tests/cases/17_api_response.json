@@ -1,0 +1,31 @@
+{
+  "status": "success"
+  "data": {
+    "user": {
+      "id": 42
+      "username": "jdoe"
+      "email": "jdoe@company.com"
+      "roles": ["admin", "editor",]
+      "preferences": {
+        "theme": 'dark',
+        "language": 'en',
+        "notifications": {
+          "email": True
+          "sms": False
+          "push": True
+        }
+      }
+      "last_login": "2024-03-15T08:30:00Z"
+    }
+    "permissions": [
+      {"resource": "users" "actions": ["read", "write", "delete",]}
+      {"resource": "posts" "actions": ["read", "write",]}
+      {"resource": "settings" "actions": ["read",]}
+    ]
+  }
+  "meta": {
+    "request_id": "req-abc123"
+    "timestamp": "2024-03-15T08:31:00Z"
+    "version": "v2"
+  }
+}

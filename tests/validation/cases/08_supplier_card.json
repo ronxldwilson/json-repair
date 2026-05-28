@@ -1,0 +1,15 @@
+{
+  name: "Kirloskar Brothers Ltd."
+  description: "India's largest pump manufacturer with over 130 years of heritage. Kirloskar has manufacturing facilities in Pune, Dewas, Coimbatore, and Kondhapuri. The company specializes in fluid handling solutions for agriculture, infrastructure, and industrial applications."
+  honest_assessment: "Unmatched in the Indian pump market for reliability and service network. Their agricultural pump range is the gold standard in rural India. However, their industrial/process pump pricing is 20-30% higher than Chinese alternatives like CNP and Grundfos India. Lead times for specialized pumps can stretch to 8-12 weeks. After-sales service is strong but concentrated in tier-1 and tier-2 cities."
+  business_types: ["Manufacturer", "Exporter"]
+  key_products: ["Centrifugal Pumps", "Submersible Pumps", "Monoblock Pumps", "Fire Fighting Pumps", "Valves", "Hydro Turbines"]
+  years_in_business: 136
+  certifications: ["IS 9079:2002", "ISO 9001:2015", "ISO 14001:2015", "WRAS Approved", "UL Listed"]
+  website: "https://www.kirloskarpumps.com"
+  address: "Kirloskar Brothers Ltd., Laxmanrao Kirloskar Road, Pune - 411011, India"
+  fit_score: 88.0
+  llm_phones: ["+91-20-2444-0520", "+91-20-2444-0521"]
+  llm_landlines: ["+91-20-2444-0500"]
+  llm_emails: ["pumps@kirloskar.com", "exports@kirloskar.com"]
+}

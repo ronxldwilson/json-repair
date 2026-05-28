@@ -1,0 +1,30 @@
+{
+  "vendor": "Crompton Greaves Consumer Electricals"
+  "product": "Crompton Super Aqua 15L Storage Water Heater"
+  "specs": {
+    "Capacity": "15 Litres"
+    "Power": "2000W"
+    "Inner Tank": "Glasslined"
+    "Pressure Rating": "8 bar"
+    "Thermostat": "Capillary type"
+    "Safety": "Thermal cutout + pressure release valve"
+  }
+  "description": "The Crompton Super Aqua is a popular mid-range storage geyser with glasslined inner tank for corrosion resistance. Features 3-level safety system and 5-star BEE rating for energy efficiency. Heating time approximately 35 minutes for full tank.\n\nKey highlights:\n- Polymer-coated body for rust resistance\n- Anti-siphon system prevents dry heating\n- 360° water heating element for uniform temperature"
+  "price_range": "₹7,499"
+  "price_reasoning": "Crompton official ₹7,499 (MRP), Flipkart ₹6,899 (sale price), local electrician ₹7,200 (with installation). Note: ₹ symbol prices verified as of Jan 2024"
+  "price_source_url": "https://www.crompton.co.in/super-aqua-15l"
+  "availability": "Ready Stock"
+  "warranty": "2 years comprehensive + 5 years on inner tank"
+  "moq": "1 unit"
+  "delivery": "3-5 business days"
+  "certifications": ["BEE 5-Star", "ISI Mark IS 2082:1993", "ISO 9001:2015"]
+  "email": null
+  "phone": "1800-419-0505"
+  "manufacturer_info": null
+  "pros": ["5-star BEE rating saves electricity", "Glasslined tank prevents corrosion", "3-level safety system", "Affordable price point"]
+  "cons": ["15L may be insufficient for families of 4+", "No digital temperature display", "Heating element not replaceable by user"]
+  "score_spec_depth": 20
+  "score_brand": 22
+  "matches_query": True
+  "product_image_urls": []
+}

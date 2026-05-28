@@ -1,0 +1,63 @@
+{
+  "schema": {
+    "types": [
+      {
+        "name": "User"
+        "kind": "OBJECT"
+        "fields": [
+          {"name": "id" "type": "ID!" "description": "Unique identifier"}
+          {"name": "email" "type": "String!" "description": "User email address"}
+          {"name": "profile" "type": "Profile" "description": "User profile data"}
+          {"name": "posts" "type": "[Post!]!" "description": "User's published posts"}
+          {"name": "createdAt" "type": "DateTime!" "description": None}
+        ]
+      }
+      {
+        "name": "Profile"
+        "kind": "OBJECT"
+        "fields": [
+          {"name": "displayName" "type": "String!" "description": "Public display name"}
+          {"name": "bio" "type": "String" "description": None}
+          {"name": "avatar" "type": "URL" "description": "Avatar image URL"}
+          {"name": "socialLinks" "type": "[SocialLink!]" "description": "External profile links"}
+        ]
+      }
+      {
+        "name": "Post"
+        "kind": "OBJECT"
+        "fields": [
+          {"name": "id" "type": "ID!" "description": "Post identifier"}
+          {"name": "title" "type": "String!" "description": "Post title"}
+          {"name": "body" "type": "String!" "description": "Post content in markdown"}
+          {"name": "tags" "type": "[String!]!" "description": "Categorization tags"}
+          {"name": "published" "type": "Boolean!" "description": None}
+          {"name": "author" "type": "User!" "description": "Post author"}
+          {"name": "comments" "type": "[Comment!]!" "description": "Post comments"}
+        ]
+      }
+      {
+        "name": "Comment"
+        "kind": "OBJECT"
+        "fields": [
+          {"name": "id" "type": "ID!" "description": "Comment identifier"}
+          {"name": "body" "type": "String!" "description": "Comment text"}
+          {"name": "author" "type": "User!" "description": "Comment author"}
+          {"name": "replies" "type": "[Comment!]!" "description": "Nested replies"}
+        ]
+      }
+      {
+        "name": "SocialLink"
+        "kind": "OBJECT"
+        "fields": [
+          {"name": "platform" "type": "String!" "description": "Platform name"}
+          {"name": "url" "type": "URL!" "description": "Profile URL"}
+        ]
+      }
+    ]
+    "queries": [
+      {"name": "user" "args": [{"name": "id" "type": "ID!"}] "returns": "User"}
+      {"name": "users" "args": [{"name": "limit" "type": "Int"} {"name": "offset" "type": "Int"}] "returns": "[User!]!"}
+      {"name": "post" "args": [{"name": "id" "type": "ID!"}] "returns": "Post"}
+    ]
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "temperature": .75,
+  "count": 0042,
+  "big_number": 1_000_000,
+  "hex_value": 0xFF,
+  "negative": -3.14,
+  "infinity": Infinity
+}

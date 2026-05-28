@@ -1,0 +1,12 @@
+{
+  // Database configuration
+  "host": "localhost",
+  "port": 5432,
+  "database": "myapp",
+  /* Authentication */
+  "username": "admin",
+  "password": "secret123",
+  "ssl": true,
+  // Connection pool
+  "pool_size": 10
+}

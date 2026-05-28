@@ -1,0 +1,15 @@
+{
+  "name": "Mahindra & Mahindra Ltd. - Farm Equipment Sector"
+  "description": "Mahindra is the world's #1 tractor company by volume, selling over 350,000 tractors annually. The Farm Equipment Sector (FES) manufactures tractors from 15 HP to 75 HP, farm implements, and agri-machinery. Manufacturing plants in Mumbai, Nagpur, Jaipur, Zaheerabad, and Rudrapur."
+  "honest_assessment": "Unbeatable for sub-50 HP tractors in India - widest dealer network (1,400+ dealers), excellent resale value, and strong government subsidy alignment. The Mahindra brand name carries tremendous trust in rural India. However, for specialized agricultural equipment (precision seeders, GPS-guided implements), they lag behind John Deere and CLAAS. Their 'after-market' parts are expensive - third-party alternatives exist but void warranty. Best for: small and medium farmers, fleet operators, government tenders."
+  "business_types": ["Manufacturer", "Exporter",]
+  "key_products": ["Tractors (Arjun, JIVO, Yuvo, Novo series)", "Rotavators", "Cultivators", "Rice Transplanters", "Combine Harvesters", "Backhoe Loaders",]
+  "years_in_business": 77
+  "certifications": ["IS 12207:2019", "ISO 9001:2015", "ISO 14001:2015", "CPCB Emission Norms", "OECD Tractor Codes",]
+  "website": "https://www.mahindratractor.com"
+  "address": "Mahindra Towers, G.M. Bhosale Marg, Worli, Mumbai - 400018, India"
+  "fit_score": 90.0
+  "llm_phones": ["+91-22-2490-1441", "+91-22-2490-1442",]
+  "llm_landlines": ["+91-22-2490-1000",]
+  "llm_emails": ["tractors@mahindra.com", "fes.exports@mahindra.com", "spares@mahindratractor.com",]
+}

@@ -1,0 +1,27 @@
+{
+  "vendor": "V-Guard Industries Ltd."
+  "product": "V-Guard VG 400 Voltage Stabilizer"
+  "specs": {"Input Range": "140V - 300V", "Output": "200V ± 5%", "Capacity": "3 KVA", "Time Delay": "3 minutes", "Type": "Servo Controlled", "Display": "Digital LED"}
+  "description": "V-Guard VG 400 is an intelligent servo-controlled voltage stabilizer designed for air conditioners up to 1.5 ton. Features wide input range (140V-300V) with ± 5% output accuracy. Built-in time delay protects compressor from short cycling. The digital LED display shows real-time input/output voltage.
+
+Suitable for: Split/Window AC up to 1.5 ton, Deep Freezers, Washing Machines.
+
+Warning: Not suitable for 2 ton or above ACs - use VG 500 instead."
+  "price_range": "₹3,150"
+  "price_reasoning": "V-Guard website ₹3,150, Amazon ₹2,999 (lightning deal, may not persist), Croma ₹3,100. Chose official website MRP."
+  "price_source_url": "https://www.vguard.in/voltage-stabilizers/vg-400"
+  "availability": "Ready Stock"
+  "warranty": "3 years"
+  "moq": "1 unit"
+  "delivery": "2-4 business days"
+  "certifications": ["ISI Mark IS 16444:2015", "ISO 9001:2015"]
+  "email": "info@vguard.in"
+  "phone": "+91-484-243-6300"
+  "manufacturer_info": "V-Guard Industries Ltd., Kerala-based company established 1977. Originally a voltage stabilizer company, now diversified into pumps, fans, water heaters, switchgear."
+  "pros": ["Wide input range handles severe voltage fluctuations", "Servo motor provides precise output", "Digital display for monitoring", "3-year warranty"]
+  "cons": ["Only suitable up to 1.5 ton AC", "Servo motor adds slight humming noise", "Wall mounting kit sold separately"]
+  "score_spec_depth": 21
+  "score_brand": 23
+  "matches_query": True
+  "product_image_urls": ["https://www.vguard.in/media/vg400-front.jpg", "https://www.vguard.in/media/vg400-display.jpg"]
+}

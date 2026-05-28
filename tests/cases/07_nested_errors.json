@@ -1,0 +1,26 @@
+{
+  "order_id": "ORD-9921",
+  "customer": {
+    "name": "David Lee"
+    "email": "david@example.com",
+    "address": {
+      "street": "456 Oak Ave"
+      "city": "San Francisco",
+      "state": "CA"
+      "zip": "94102"
+    }
+  },
+  "items": [
+    {
+      "sku": "WIDGET-A"
+      "qty": 3,
+      "price": 29.99
+    },
+    {
+      "sku": "GADGET-B"
+      "qty": 1,
+      "price": 149.50
+    }
+  ],
+  "total": 239.47
+}

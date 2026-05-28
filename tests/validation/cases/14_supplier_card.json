@@ -1,0 +1,16 @@
+
+
+  "name": "Larsen & Toubro Ltd."
+  "description": "L&T is India's largest engineering and construction conglomerate with revenues exceeding $23 billion. The company operates across technology, engineering, construction, manufacturing, and financial services. Their heavy engineering division manufactures critical process equipment, defense systems, and nuclear components."
+  "honest_assessment": "World-class engineering capabilities but primarily a project company, not a catalog product supplier. B2B procurement from L&T works best for custom-engineered equipment (heat exchangers, pressure vessels, turbines). Minimum project values typically start at ₹1 crore. Their procurement process is bureaucratic - expect 4-6 weeks just for technical evaluation. Quality is unquestionable but timelines often slip 10-20%. Best suited for infrastructure and heavy industry buyers."
+  "business_types": ["Manufacturer", "EPC Contractor", "Exporter"]
+  "key_products": ["Heavy Engineering Equipment", "Defense Systems", "Electrical & Automation", "Construction Machinery", "IT Services (LTIMindtree)", "Financial Services"]
+  "years_in_business": 86
+  "certifications": ["ISO 9001:2015", "ISO 14001:2015", "ASME U/U2/S Stamps", "NABCB Accredited", "OHSAS 18001", "PED 2014/68/EU"]
+  "website": "https://www.larsentoubro.com"
+  "address": "L&T House, N.M. Marg, Ballard Estate, Mumbai - 400001, India"
+  "fit_score": 72.0
+  "llm_phones": ["+91-22-6752-5656"]
+  "llm_landlines": ["+91-22-6752-5000", "+91-22-6752-5001"]
+  "llm_emails": ["info@larsentoubro.com", "heavyengg@larsentoubro.com"]
+

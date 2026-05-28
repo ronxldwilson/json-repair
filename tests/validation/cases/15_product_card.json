@@ -1,0 +1,30 @@
+{
+  "vendor": "Finolex Cables Ltd.",
+  "product": "Finolex FR-LSH 1.5 sq mm House Wire",
+  "specs" {
+    "Type" "Single Core FR-LSH",
+    "Cross Section" "1.5 sq mm",
+    "Voltage Rating" "1100V",
+    "Conductor" "Annealed Copper - ETP Grade",
+    "Insulation" "FR-LSH XLPE",
+    "Length" "90 meters/coil"
+  },
+  "description" "Finolex FR-LSH (Flame Retardant Low Smoke Halogen-free) cables are designed for safer building wiring. The XLPE insulation produces minimal toxic smoke during fire, making it ideal for enclosed spaces, hospitals, and high-rise buildings. Conductor purity of 99.97% ensures low resistance and minimal energy loss.",
+  "price_range" "₹1,650/coil",
+  "price_reasoning" "Finolex official dealer ₹1,650 (MRP for 90m coil), ElectroBazaar ₹1,520 (wholesale 25+ coils), Amazon ₹1,590 (seller listing, authenticity unverified). Used authorized dealer price.",
+  "price_source_url" "https://www.finolex.com/fr-lsh-cables",
+  "availability" "Ready Stock",
+  "warranty" "15 years on conductor",
+  "moq" "1 coil",
+  "delivery" "2-4 business days",
+  "certifications" ["IS 694:2010", "BASEC", "ISO 9001:2015", "FR-LSH IEC 60754"],
+  "email" "cables@finolex.com",
+  "phone" "+91-20-2714-0555",
+  "manufacturer_info" "Finolex Cables Ltd., Pune-based manufacturer established 1958. India's largest manufacturer of electrical and communication cables with 6 plants.",
+  "pros" ["FR-LSH safest cable type for buildings", "15-year warranty longest in segment", "99.97% copper purity", "Halogen-free - no toxic gas in fire"],
+  "cons" ["20% costlier than standard FR cables", "Limited color options in FR-LSH range", "Not widely stocked - may need to order"],
+  "score_spec_depth" 22,
+  "score_brand" 24,
+  "matches_query" true,
+  "product_image_urls" ["https://www.finolex.com/media/fr-lsh-coil.jpg"]
+}

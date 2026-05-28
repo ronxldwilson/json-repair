@@ -1,0 +1,32 @@
+{
+  "vendor": "Anchor by Panasonic",
+  "product": "Anchor Roma Modular Switches - 20A",
+  "specs": {
+    "Type": "1-Way Switch 20A 240V",
+    "Module Size": "1M",
+    "Contact Material": "Silver Alloy",
+    "Housing": "Polycarbonate",
+    "IP Rating": "IP20",
+    "Cycles": "100,000 operations",
+  },
+  "description": "Anchor Roma 20A modular switch by Panasonic - the most widely installed modular switch series in India. The 20A variant handles heavy loads like geysers, ACs, and room heaters. Silver alloy contacts ensure spark-free operation. The polycarbonate housing is self-extinguishing (V0 rated). Available in white and black front plates.
+
+Technical note: Wiring requires 4 sq mm copper wire for full 20A load. Use with Anchor Roma 20A socket (Cat No. 66202) for complete point.",
+  "price_range": "₹82/piece",
+  "price_reasoning": "Anchor distributor ₹82 (trade price for 100+ pieces), Amazon ₹95 (MRP for single), IndustryBuying ₹78 (bulk 500+). Used distributor trade price as typical B2B scenario.",
+  "price_source_url": "https://www.panasonic.com/in/anchor/roma-switches",
+  "availability": "Ready Stock",
+  "warranty": "10 years",
+  "moq": "Box of 10",
+  "delivery": "1-2 business days",
+  "certifications": ["ISI Mark IS 3854:1997", "ISO 9001:2015", "CE Marked", "KEMA Certified",],
+  "email": "anchorsupport@in.panasonic.com",
+  "phone": "+91-22-6891-8000",
+  "manufacturer_info": "Anchor Electricals (now Panasonic Life Solutions India) was acquired by Panasonic in 2007. Originally founded in 1963, it pioneered modular switches in India. 5 manufacturing plants.",
+  "pros": ["Most trusted switch brand in India", "100,000 operation cycle life", "Silver alloy contacts - spark-free", "10-year warranty unmatched",],
+  "cons": ["Premium priced vs Chinese modular switches", "Roma design is dated vs Havells/Legrand aesthetic", "Front plates sold separately",],
+  "score_spec_depth": 18,
+  "score_brand": 26,
+  "matches_query": True,
+  "product_image_urls": ["https://www.panasonic.com/in/media/roma-20a-switch.jpg",],
+}

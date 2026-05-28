@@ -1,0 +1,59 @@
+{
+  "session_id": "sess-a1b2c3"
+  "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"
+  "events": [
+    {
+      "timestamp": "2024-03-15T10:00:00Z"
+      "type": "page_view"
+      "properties": {
+        "url": "/products/laptop-pro"
+        "referrer": "https://google.com/search?q=best+laptops"
+        "title": "Laptop Pro 15 - TechMart"
+        "duration_ms": None
+      }
+    }
+    {
+      "timestamp": "2024-03-15T10:00:15Z"
+      "type": "click"
+      "properties": {
+        "element": "button#add-to-cart"
+        "url": "/products/laptop-pro"
+        "referrer": None
+        "title": None
+        "duration_ms": None
+      }
+    }
+    {
+      "timestamp": "2024-03-15T10:00:16Z"
+      "type": "cart_update"
+      "properties": {
+        "action": "add"
+        "product_id": "LAP-PRO-15"
+        "quantity": 1
+        "cart_total": 1299.99
+      }
+    }
+    {
+      "timestamp": "2024-03-15T10:02:30Z"
+      "type": "checkout_start"
+      "properties": {
+        "cart_items": 1
+        "cart_total": 1299.99
+        "payment_method": None
+        "coupon_code": None
+      }
+    }
+    {
+      "timestamp": "2024-03-15T10:05:45Z"
+      "type": "purchase"
+      "properties": {
+        "order_id": "ORD-20240315-001"
+        "total": 1299.99
+        "tax": 107.25
+        "shipping": 0.00
+        "payment_method": "credit_card"
+        "coupon_code": None
+      }
+    }
+  ]
+}

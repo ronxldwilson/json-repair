@@ -1,0 +1,60 @@
+{
+  "cluster": {
+    "name": "prod-us-east-1"
+    "provider": 'aws',
+    "region": "us-east-1"
+    "kubernetes_version": "1.28"
+    "node_pools": [
+      {
+        "name": "general"
+        "instance_type": "m5.xlarge"
+        "min_nodes": 3
+        "max_nodes": 10
+        "auto_scaling": True
+        "labels": {"tier": "general" "env": "production"}
+        "taints": []
+      }
+      {
+        "name": "gpu"
+        "instance_type": "p3.2xlarge"
+        "min_nodes": 0
+        "max_nodes": 4
+        "auto_scaling": True
+        "labels": {"tier": "gpu" "env": "production" "accelerator": "nvidia-v100"}
+        "taints": [
+          {"key": "nvidia.com/gpu" "value": "true" "effect": "NoSchedule"}
+        ]
+      }
+    ]
+    "networking": {
+      "vpc_cidr": "10.0.0.0/16"
+      "subnet_cidrs": ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24",]
+      "enable_nat": True
+      "enable_vpn": False
+      "dns": {
+        "provider": "route53"
+        "zone": "prod.internal"
+        "ttl": 300
+      }
+    }
+    "monitoring": {
+      "prometheus": {
+        "enabled": True
+        "retention_days": 30
+        "storage_gb": 100
+      }
+      "grafana": {
+        "enabled": True
+        "admin_email": "devops@company.com"
+        "dashboards": ["cluster-overview", "node-health", "pod-metrics",]
+      }
+      "alerting": {
+        "enabled": True
+        "channels": [
+          {"type": "slack" "webhook": "https://hooks.slack.com/xxx" "severity": ["critical", "warning",]}
+          {"type": "pagerduty" "api_key": "pd-key-123" "severity": ["critical",]}
+        ]
+      }
+    }
+  }
+}

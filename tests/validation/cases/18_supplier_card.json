@@ -1,0 +1,17 @@
+Here is the supplier information in JSON format:
+
+{
+  "name": "Thermax Ltd."
+  "description": "Thermax is an energy and environment solutions company headquartered in Pune. They manufacture boilers, absorption chillers, water treatment plants, and air pollution control equipment. A key player in India's industrial sustainability transition with presence in 90+ countries."
+  "honest_assessment": "Excellent for industrial boilers (India's #1) and absorption chillers. Their water treatment division has improved significantly in the last 5 years. However, after-sales service is inconsistent - excellent in Maharashtra/Gujarat, mediocre in other states. Custom-engineered products (waste heat recovery, biomass boilers) are their strength; standard products face stiff competition from cheaper Chinese imports. Expect 8-12 week lead times for anything non-standard. Good fit for mid-to-large industrial buyers."
+  "business_types": ["Manufacturer" "EPC Contractor" "Exporter"]
+  "key_products": ["Industrial Boilers" "Absorption Chillers" "Water Treatment Plants" "Air Pollution Control" "Solar Energy Systems" "Chemical Treatment"]
+  "years_in_business": 58
+  "certifications": ["ISO 9001:2015" "ISO 14001:2015" "ASME S/U Stamps" "IBR Certified" "CE Marked"]
+  "website": "https://www.thermaxglobal.com"
+  "address": "D-13 MIDC Industrial Area, Chinchwad, Pune - 411019, India"
+  "fit_score": 83.5
+  "llm_phones": ["+91-20-2714-1000"]
+  "llm_landlines": ["+91-20-2714-1001" "+91-20-2714-1002"]
+  "llm_emails": ["thermax@thermaxindia.com" "boilers@thermaxindia.com"]
+}

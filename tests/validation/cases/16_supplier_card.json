@@ -1,0 +1,15 @@
+{
+  "name": "Godrej & Boyce Mfg. Co. Ltd.",,,
+  "description": "Godrej & Boyce is one of India's most diversified engineering companies, part of the 127-year-old Godrej Group. The manufacturing division produces everything from security solutions (locks, safes) to aerospace components, material handling equipment, and precision engineering parts.",
+  "honest_assessment": "Excellent for security products (locks, safes, access control) and storage solutions (industrial shelving, warehouse systems). Their tooling and precision engineering division is underrated - capable of complex die-cast and sheet metal work. For B2B, the sweet spot is storage/material handling systems where they dominate the Indian market. Avoid their consumer appliances division for B2B - that's a separate entity (Godrej Appliances). Pricing is fair but not the cheapest; you pay for the brand and reliability.",
+  "business_types": ["Manufacturer", "Solution Provider"],
+  "key_products": ["Security Solutions", "Storage Systems", "Material Handling", "Precision Engineering", "Aerospace Components", "Furniture & Interiors"],
+  "years_in_business": 127,
+  "certifications": ["ISO 9001:2015", "ISO 14001:2015", "AS 9100D (Aerospace)", "NABL Accredited Lab", "DGQA Approved"],
+  "website": "https://www.godrej.com/godrej-and-boyce",
+  "address": "Pirojshanagar, Vikhroli (East), Mumbai - 400079, India",
+  "fit_score": 80.5,
+  "llm_phones": ["+91-22-6796-2001", "+91-22-6796-2002"],
+  "llm_landlines": ["+91-22-6796-2000"],
+  "llm_emails": ["corporate@godrej.com", "precision.engg@godrej.com"]
+}

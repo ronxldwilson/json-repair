@@ -1,0 +1,15 @@
+{
+  "name": "Siemens Ltd. (India)"
+  "description": "Siemens India is a technology powerhouse spanning electrification, automation, and digitalization. The Indian operations include 22 manufacturing plants producing switchgear, transformers, motors, medical equipment, and smart infrastructure solutions. Revenue of ~₹20,000 crore (FY2024)."
+  "honest_assessment": "Gold standard for industrial automation (PLCs, drives, SCADA) and power distribution equipment. Their SIMATIC and SINAMICS product lines are industry benchmarks. However, Siemens India operates with German pricing in an Indian market - expect 30-50% premium over domestic alternatives. Their \"Totally Integrated Automation\" approach means vendor lock-in once you commit. Spare parts and service contracts are expensive but reliable. Best for: greenfield factories, pharmaceutical plants (where validation matters), and any application where downtime cost exceeds equipment premium. Not recommended for price-sensitive SME applications where Schneider or ABB offer comparable products at 20-30% less."
+  "business_types": ["Manufacturer" "Distributor" "Solution Provider" "Exporter"]
+  "key_products": ["PLCs (SIMATIC S7)" "VFDs (SINAMICS)" "LV Switchgear (SENTRON)" "Power Transformers" "MRI Machines" "Building Automation"]
+  "years_in_business": 157
+  "certifications": ["ISO 9001:2015" "ISO 14001:2015" "IECEx" "ATEX" "UL Listed" "NABL Accredited"]
+  "website": "https://www.siemens.com/in"
+  "address": "Birla Aurora, Level 21, Dr. Annie Besant Road, Worli, Mumbai - 400030"
+  "fit_score": 76.5
+  "llm_phones": ["+91-22-3967-7000" "+91-22-3967-7001"]
+  "llm_landlines": ["+91-22-3967-7500"]
+  "llm_emails": ["india.info@siemens.com" "industry.in@siemens.com"]
+}

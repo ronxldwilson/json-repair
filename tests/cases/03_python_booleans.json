@@ -1,0 +1,6 @@
+{
+  "username": "bob",
+  "is_active": True,
+  "is_admin": False,
+  "profile": None
+}

@@ -1,0 +1,60 @@
+{
+  "patient": {
+    "id": "PAT-2024-0891"
+    "name": "Maria Garcia"
+    "dob": "1985-07-22"
+    "gender": "female"
+    "blood_type": "O+"
+    "allergies": ["penicillin", "sulfa",]
+    "emergency_contact": {
+      "name": "Carlos Garcia"
+      "relationship": "spouse"
+      "phone": "+1-555-0142"
+    }
+  }
+  "visits": [
+    {
+      "date": "2024-01-10"
+      "provider": "Dr. James Wilson"
+      "department": "Internal Medicine"
+      "vitals": {
+        "bp_systolic": 125
+        "bp_diastolic": 82
+        "heart_rate": 78
+        "temperature_f": 98.6
+        "weight_kg": 65.3
+      }
+      "diagnoses": [
+        {"code": "J06.9" "description": "Upper respiratory infection" "primary": True}
+        {"code": "R50.9" "description": "Fever, unspecified" "primary": False}
+      ]
+      "prescriptions": [
+        {
+          "medication": "Amoxicillin"
+          "dosage": "500mg"
+          "frequency": "3x daily"
+          "duration_days": 10
+          "refills": 0
+        }
+      ]
+      "follow_up": True
+      "notes": "Patient presents with sore throat and mild fever. No known drug interactions.
+    }
+    {
+      "date": "2024-01-20"
+      "provider": "Dr. James Wilson"
+      "department": "Internal Medicine"
+      "vitals": {
+        "bp_systolic": 118
+        "bp_diastolic": 76
+        "heart_rate": 72
+        "temperature_f": 98.2
+        "weight_kg": 65.1
+      }
+      "diagnoses": []
+      "prescriptions": []
+      "follow_up": False
+      "notes": "Follow-up visit. Symptoms resolved. No further treatment needed."
+    }
+  ]
+}

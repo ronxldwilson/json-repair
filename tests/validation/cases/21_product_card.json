@@ -1,0 +1,25 @@
+{
+  "vendor": "Polycab India Ltd."
+  "product": "Polycab Optima Plus 1 Ton 3-Star Split AC"
+  "specs": {"Capacity": "1 Ton", "Star Rating": "3-Star BEE 2024", "Compressor": "Rotary", "Refrigerant": "R32", "ISEER": "3.65", "Noise Level": "Indoor 36dB / Outdoor 52dB", "Copper Coil": True}
+  "description": "Polycab Optima Plus is a recently launched split AC from the company known primarily for its wiring. Features R32 eco-friendly refrigerant, copper condenser coils, and 4-way swing. Being a new entrant in the AC market, Polycab is pricing aggressively to capture market share.
+
+Note from scraper: This is Polycab's first year in AC segment. Long-term reliability data not available. Warranty and service network still being established across India. Buyer discretion advised for tier-3+ cities where service may not be available yet."
+  "price_range": "₹29,990"
+  "price_reasoning": "Polycab website ₹29,990 (MRP), Amazon ₹28,500 (launch offer), Flipkart ₹29,200. Prices are introductory and may increase. No dealer network established yet for this product line."
+  "price_source_url": "https://www.polycab.com/consumer-electricals/air-conditioners"
+  "availability": "Limited Stock"
+  "warranty": "1 year comprehensive + 5 years compressor + 10 years PCB"
+  "moq": "1 unit"
+  "delivery": "7-10 business days"
+  "certifications": ["BEE 3-Star", "ISI Mark", "ISO 9001:2015"]
+  "email": None
+  "phone": "+91-22-6672-2222"
+  "manufacturer_info": None
+  "pros": ["Aggressive introductory pricing", "R32 eco-friendly refrigerant", "Copper condenser coils (not aluminium)", "Strong brand in electricals"]
+  "cons": ["Brand new product - no track record in AC segment", "Service network still being established", "3-Star rating when competitors offer 5-Star at similar price", "Limited dealer availability"]
+  "score_spec_depth": 19
+  "score_brand": 18
+  "matches_query": True
+  "product_image_urls": ["https://www.polycab.com/media/optima-plus-1ton.jpg"]
+}
