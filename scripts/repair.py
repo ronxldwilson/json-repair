@@ -21,11 +21,39 @@ def _replace_single_quotes(t: str) -> str:
         elif ch == '"':
             result.append(ch)
             in_double = True
+        elif ch == '\\' and i + 1 < len(t) and t[i + 1] == "'":
+            result.append('"')
+            i += 2
+            while i < len(t):
+                c = t[i]
+                if c == '\\' and i + 1 < len(t) and t[i + 1] == "'":
+                    result.append('"')
+                    i += 2
+                    break
+                if c == '\\' and i + 1 < len(t):
+                    result.append(c)
+                    result.append(t[i + 1])
+                    i += 2
+                    continue
+                if c == "'":
+                    result.append('"')
+                    i += 1
+                    break
+                if c == '"':
+                    result.append('\\"')
+                else:
+                    result.append(c)
+                i += 1
+            continue
         elif ch == "'":
             result.append('"')
             i += 1
             while i < len(t):
                 c = t[i]
+                if c == '\\' and i + 1 < len(t) and t[i + 1] == "'":
+                    result.append(t[i + 1])
+                    i += 2
+                    continue
                 if c == '\\' and i + 1 < len(t):
                     result.append(c)
                     result.append(t[i + 1])
@@ -299,6 +327,177 @@ def _strip_bare_escapes(t: str) -> str:
     return ''.join(result)
 
 
+def _is_structural_quote(t: str, pos: int) -> bool:
+    raw_after = t[pos + 1:]
+    after = raw_after.lstrip()
+    if not after:
+        return True
+    if after[0] in ',}]:{[':
+        return True
+    if raw_after and raw_after[0] == '\n':
+        return True
+    if after.startswith('+ "'):
+        return True
+    if re.match(r'[a-zA-Z_]\w*"\s*:', after):
+        return True
+    if after[0] == '"':
+        rem = after[1:]
+        close = rem.find('"')
+        if close >= 0:
+            trailing = rem[close + 1:].lstrip()[:1]
+            if trailing in (':', ',', '}', ']', '') or not trailing:
+                return True
+    if re.match(r',\s*"[^"]*"\s*:', after):
+        return True
+    if re.match(r',\s*"', after):
+        rest = after[1:].lstrip()
+        if rest.startswith('"'):
+            rem = rest[1:]
+            close = rem.find('"')
+            if close >= 0 and rem[close + 1:].lstrip().startswith(':'):
+                return True
+    return False
+
+
+def _fix_missing_open_quotes(t: str) -> str:
+    result = []
+    i = 0
+    in_str = False
+    while i < len(t):
+        ch = t[i]
+        if in_str:
+            if ch == '\\' and i + 1 < len(t):
+                result.append(ch)
+                result.append(t[i + 1])
+                i += 2
+                continue
+            if ch == '"':
+                in_str = False
+            result.append(ch)
+            i += 1
+            continue
+        if ch == '"':
+            in_str = True
+            result.append(ch)
+            i += 1
+            continue
+        m = re.match(r'([a-zA-Z_]\w*)"', t[i:])
+        if m:
+            word = m.group(1)
+            prev = ''.join(result).rstrip()
+            after_quote = t[i + len(word) + 1:]
+            after_q = after_quote.lstrip()
+            is_value_pos = prev and (prev[-1] in ':,[{' or (prev[-1] == ' ' and len(prev) >= 2 and prev[-2] in ':,'))
+            is_key_pos = prev and prev[-1] == '"' and re.match(r'([a-zA-Z_]\w*)"(\s*:)', t[i:])
+            if is_key_pos:
+                km = re.match(r'([a-zA-Z_]\w*)"(\s*:)', t[i:])
+                joined = ''.join(result)
+                if len(joined) >= 2 and joined[-2] == ',':
+                    result_str = joined[:-2] + '"'
+                    result.clear()
+                    result.append(result_str)
+                result.append(',')
+                result.append('"' + km.group(1) + '"' + km.group(2))
+                i += len(km.group(0))
+                continue
+            if is_value_pos:
+                if after_q and after_q[0] in ',}]:':
+                    result.append('"' + word + '"')
+                    i += len(word) + 1
+                    continue
+                closing = after_quote.find('"')
+                if closing >= 0:
+                    inner = after_quote[:closing]
+                    after_close = after_quote[closing + 1:].lstrip()
+                    if after_close and after_close[0] in ',}]':
+                        result.append('"' + word + inner + '"')
+                        i += len(word) + 1 + closing + 1
+                        continue
+        result.append(ch)
+        i += 1
+    return ''.join(result)
+
+
+def _fix_unquoted_inner_quotes(t: str) -> str:
+    result = []
+    i = 0
+    while i < len(t):
+        ch = t[i]
+        if ch != '"':
+            result.append(ch)
+            i += 1
+            continue
+        prev = ''.join(result).rstrip()
+        if prev and prev[-1] not in ':{[,':
+            result.append(ch)
+            i += 1
+            continue
+        i += 1
+        parts = []
+        while i < len(t):
+            c = t[i]
+            if c == '\\' and i + 1 < len(t):
+                parts.append(c)
+                parts.append(t[i + 1])
+                i += 2
+                continue
+            if c == '"':
+                if _is_structural_quote(t, i):
+                    break
+                parts.append('\\"')
+                i += 1
+                continue
+            parts.append(c)
+            i += 1
+        result.append('"')
+        result.append(''.join(parts))
+        if i < len(t):
+            result.append('"')
+            i += 1
+        else:
+            result.append('"')
+    return ''.join(result)
+
+
+def _quote_bare_words(t: str) -> str:
+    result = []
+    i = 0
+    in_str = False
+    while i < len(t):
+        ch = t[i]
+        if in_str:
+            result.append(ch)
+            if ch == '\\' and i + 1 < len(t):
+                result.append(t[i + 1])
+                i += 2
+                continue
+            if ch == '"':
+                in_str = False
+            i += 1
+            continue
+        if ch == '"':
+            in_str = True
+            result.append(ch)
+            i += 1
+            continue
+        m = re.match(r'[a-zA-Z_][a-zA-Z0-9_\-]*', t[i:])
+        if m:
+            word = m.group(0)
+            if word in ('true', 'false', 'null'):
+                result.append(word)
+            else:
+                prev = ''.join(result).rstrip()
+                if prev and prev[-1] in ':,[':
+                    result.append('"' + word + '"')
+                else:
+                    result.append(word)
+            i += len(word)
+            continue
+        result.append(ch)
+        i += 1
+    return ''.join(result)
+
+
 def _auto_close_brackets(t: str) -> str:
     result = []
     stack = []
@@ -347,6 +546,12 @@ def deterministic_repair(text: str) -> str:
     if m and '{' not in t and '[' not in t:
         t = m.group(1).strip()
 
+    if t and '{' not in t and '[' not in t:
+        if '"' not in t and re.match(r'^[a-zA-Z_][\w\s]*$', t):
+            return '"' + t + '"'
+        if t.endswith('"') and not t.startswith('"') and t.count('"') == 1:
+            return '"' + t
+
     first_brace = min(
         (t.find('{') if '{' in t else len(t)),
         (t.find('[') if '[' in t else len(t)),
@@ -393,6 +598,9 @@ def deterministic_repair(text: str) -> str:
     t = _fix_multiline_strings(t)
     t = _fix_closing_quotes(t)
 
+    t = _fix_unquoted_inner_quotes(t)
+    t = _fix_missing_open_quotes(t)
+
     if "'" in t:
         t = _replace_single_quotes(t)
 
@@ -402,7 +610,14 @@ def deterministic_repair(text: str) -> str:
         t = _strip_ellipsis(t)
         t = re.sub(r',\s*,+', ',', t)
 
+    while True:
+        new_t = re.sub(r'"([^"\\]*(?:\\.[^"\\]*)*)"\s*\+\s*"([^"\\]*(?:\\.[^"\\]*)*)"', r'"\1\2"', t)
+        if new_t == t:
+            break
+        t = new_t
+
     t = re.sub(r'(?<=[{,\n])\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*:', r' "\1":', t)
+    t = re.sub(r'(?<=[{,\n])\s*(\d+)\s*:', r' "\1":', t)
 
     t = re.sub(r'^(\s*"(?:[^"\\]|\\.)*")\s+(")', r'\1: \2', t, flags=re.MULTILINE)
     t = re.sub(r'^(\s*"(?:[^"\\]|\\.)*")\s+(\d)', r'\1: \2', t, flags=re.MULTILINE)
@@ -412,6 +627,8 @@ def deterministic_repair(text: str) -> str:
     t = re.sub(r'(?<=[{,])\s*("(?:[^"\\]|\\.)*")\s+(true|false|null)', r' \1: \2', t)
     t = re.sub(r'(")\s+(\{)', r'\1: \2', t)
     t = re.sub(r'(")\s+(\[)', r'\1: \2', t)
+
+    t = _quote_bare_words(t)
 
     t = re.sub(r'(:\s*)([\}\]])', r'\1null\2', t)
     t = re.sub(r'(:\s*)(,)', r'\1null\2', t)
@@ -423,6 +640,12 @@ def deterministic_repair(text: str) -> str:
     t = re.sub(r'(\])\s*\n(\s*\[)', r'\1,\n\2', t)
     t = re.sub(r'(\})\s*\n(\s*")', r'\1,\n\2', t)
     t = re.sub(r'(\])\s*\n(\s*")', r'\1,\n\2', t)
+
+    t = re.sub(r'(\d),?(\s*\{)', r'\1},\2', t)
+    t = re.sub(r'(\})(\s*\{)', r'\1,\2', t)
+    t = re.sub(r'(\])(\s*\[)', r'\1,\2', t)
+    t = re.sub(r'(\})(\s*\[)', r'\1,\2', t)
+    t = re.sub(r'(\])(\s*\{)', r'\1,\2', t)
 
     t = re.sub(r'(")\s+(")', r'\1, \2', t)
     t = re.sub(r'(\])\s+(")', r'\1, \2', t)
