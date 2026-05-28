@@ -149,6 +149,89 @@ def _escape_control_chars(t: str) -> str:
     return ''.join(result)
 
 
+def _fix_multiline_strings(t: str) -> str:
+    """Detect string values spanning multiple lines and escape embedded newlines."""
+    lines = t.split('\n')
+    result = []
+    i = 0
+    while i < len(lines):
+        stripped = lines[i].rstrip()
+        m = re.match(r'^(\s*"(?:[^"\\]|\\.)*"\s*:\s*")(.*)', stripped)
+        if not m:
+            result.append(lines[i])
+            i += 1
+            continue
+
+        prefix = m.group(1)
+        value_rest = m.group(2)
+        uq = len(re.findall(r'(?<!\\)"', value_rest))
+        if uq >= 1:
+            result.append(lines[i])
+            i += 1
+            continue
+
+        parts = [value_rest]
+        i += 1
+        while i < len(lines):
+            cont = lines[i].rstrip()
+            if re.match(r'^\s*"(?:[^"\\]|\\.)*"\s*:', cont):
+                break
+            if re.match(r'^\s*[}\]]+\s*,?\s*$', cont):
+                break
+            uq_cont = len(re.findall(r'(?<!\\)"', cont))
+            if uq_cont >= 1:
+                parts.append(cont)
+                i += 1
+                break
+            parts.append(cont)
+            i += 1
+
+        result.append(prefix + '\\n'.join(parts))
+
+    return '\n'.join(result)
+
+
+def _fix_numbers(t: str) -> str:
+    """Fix non-standard number formats: leading dots, underscores, hex, octal, Infinity."""
+    t = re.sub(r'(?<![.\d])\.([\d])', r'0.\1', t)
+    while True:
+        new_t = re.sub(r'(\d)_(\d)', r'\1\2', t)
+        if new_t == t:
+            break
+        t = new_t
+    t = re.sub(r'\b0x([0-9a-fA-F]+)\b', lambda m: str(int(m.group(1), 16)), t)
+    t = re.sub(r'(?<=:\s)0+(\d+)(?=[,\s}\]\n])', r'\1', t)
+    t = re.sub(r'-?Infinity\b', 'null', t)
+    t = re.sub(r'\bNaN\b', 'null', t)
+    return t
+
+
+def _auto_close_brackets(t: str) -> str:
+    """Append missing closing brackets/braces."""
+    stack = []
+    in_str = False
+    i = 0
+    while i < len(t):
+        ch = t[i]
+        if in_str:
+            if ch == '\\' and i + 1 < len(t):
+                i += 2
+                continue
+            if ch == '"':
+                in_str = False
+        elif ch == '"':
+            in_str = True
+        elif ch == '{':
+            stack.append('}')
+        elif ch == '[':
+            stack.append(']')
+        elif ch in '}]':
+            if stack and stack[-1] == ch:
+                stack.pop()
+        i += 1
+    return t + ''.join(reversed(stack))
+
+
 def deterministic_repair(text: str) -> str:
     """Fast regex/string-based repair for common JSON errors."""
     t = text.strip()
@@ -196,6 +279,7 @@ def deterministic_repair(text: str) -> str:
     t = re.sub(r'\bFalse\b', 'false', t)
     t = re.sub(r'\bNone\b', 'null', t)
 
+    t = _fix_multiline_strings(t)
     t = _fix_closing_quotes(t)
 
     if "'" in t:
@@ -205,6 +289,10 @@ def deterministic_repair(text: str) -> str:
 
     t = re.sub(r'(?<=[{,\n])\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*:', r' "\1":', t)
 
+    # Fix missing colon: "key" "value", "key" 123, "key" true, "key" {, "key" [
+    t = re.sub(r'^(\s*"(?:[^"\\]|\\.)*")\s+(")', r'\1: \2', t, flags=re.MULTILINE)
+    t = re.sub(r'^(\s*"(?:[^"\\]|\\.)*")\s+(\d)', r'\1: \2', t, flags=re.MULTILINE)
+    t = re.sub(r'^(\s*"(?:[^"\\]|\\.)*")\s+(true|false|null)', r'\1: \2', t, flags=re.MULTILINE)
     t = re.sub(r'(")\s+(\{)', r'\1: \2', t)
     t = re.sub(r'(")\s+(\[)', r'\1: \2', t)
 
@@ -219,12 +307,21 @@ def deterministic_repair(text: str) -> str:
     t = re.sub(r'(\})\s*\n(\s*")', r'\1,\n\2', t)
     t = re.sub(r'(\])\s*\n(\s*")', r'\1,\n\2', t)
 
+    # Fix missing commas on same line
     t = re.sub(r'(")\s+(")', r'\1, \2', t)
+    t = re.sub(r'(\])\s+(")', r'\1, \2', t)
+    t = re.sub(r'(\])\s+(\[)', r'\1, \2', t)
+    t = re.sub(r'(\})\s+(")', r'\1, \2', t)
+    t = re.sub(r'(\})\s+(\{)', r'\1, \2', t)
     t = re.sub(r'(\d)\s+(")', r'\1, \2', t)
     t = re.sub(r'(true|false|null)\s+(")', r'\1, \2', t)
 
+    t = _fix_numbers(t)
+
     t = _escape_control_chars(t)
     t = re.sub(r'(?<!\\)\\(?!["\\/bfnrtu])', r'\\\\', t)
+
+    t = _auto_close_brackets(t)
 
     return t
 
