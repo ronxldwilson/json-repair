@@ -93,10 +93,10 @@ def _fix_closing_quotes(t: str) -> str:
     fixed = []
     for line in lines:
         stripped = line.rstrip()
-        m = re.match(r'^(\s*"[^"]*"\s*:\s*")(.*)$', stripped)
+        m = re.match(r'^(\s*"[^"]*"\s*:\s*")(.*)$', stripped)  # match "key": "value_start
         if m:
             val_part = m.group(2)
-            quote_count = len(re.findall(r'(?<!\\)"', val_part))
+            quote_count = len(re.findall(r'(?<!\\)"', val_part))  # count unescaped quotes in value
             if quote_count % 2 == 0:
                 stripped = stripped + '"'
         fixed.append(stripped)
@@ -197,7 +197,7 @@ def _fix_multiline_strings(t: str) -> str:
     i = 0
     while i < len(lines):
         stripped = lines[i].rstrip()
-        m = re.match(r'^(\s*"(?:[^"\\]|\\.)*"\s*:\s*")(.*)', stripped)
+        m = re.match(r'^(\s*"(?:[^"\\]|\\.)*"\s*:\s*")(.*)', stripped)  # match "key": "value_start
         if not m:
             result.append(lines[i])
             i += 1
@@ -205,7 +205,7 @@ def _fix_multiline_strings(t: str) -> str:
 
         prefix = m.group(1)
         value_rest = m.group(2)
-        uq = len(re.findall(r'(?<!\\)"', value_rest))
+        uq = len(re.findall(r'(?<!\\)"', value_rest))  # count unescaped quotes
         if uq >= 1:
             result.append(lines[i])
             i += 1
@@ -215,11 +215,11 @@ def _fix_multiline_strings(t: str) -> str:
         i += 1
         while i < len(lines):
             cont = lines[i].rstrip()
-            if re.match(r'^\s*"(?:[^"\\]|\\.)*"\s*:', cont):
+            if re.match(r'^\s*"(?:[^"\\]|\\.)*"\s*:', cont):  # next line is a new key
                 break
-            if re.match(r'^\s*[}\]]+\s*,?\s*$', cont):
+            if re.match(r'^\s*[}\]]+\s*,?\s*$', cont):  # next line is a closing bracket
                 break
-            uq_cont = len(re.findall(r'(?<!\\)"', cont))
+            uq_cont = len(re.findall(r'(?<!\\)"', cont))  # count unescaped quotes
             if uq_cont >= 1:
                 parts.append(cont)
                 i += 1
@@ -239,6 +239,7 @@ def _quote_leading_zero_numbers(t: str) -> str:
         {"zip": 0789}          → {"zip": "0789"}
         {"price": "₹78,000"}   → {"price": "₹78,000"}  (inside string, untouched)
     """
+    # match leading-zero numbers like 0789, but not 0.5 or inside words/strings
     pat = re.compile(r'(?<![.\d\w"])0(\d[\d.eE+\-]*)')
     result = []
     in_str = False
@@ -284,18 +285,18 @@ def _fix_numbers(t: str) -> str:
         0789           → "0789"     (leading-zero → quoted string)
         Infinity / NaN → null
     """
-    t = re.sub(r'(?<![.\d])\.([\d])', r'0.\1', t)
-    t = re.sub(r'(\d)\.(?=[,\s\]\}\)]|$)', r'\g<1>.0', t)
+    t = re.sub(r'(?<![.\d])\.([\d])', r'0.\1', t)  # .75 → 0.75 (add leading zero)
+    t = re.sub(r'(\d)\.(?=[,\s\]\}\)]|$)', r'\g<1>.0', t)  # 2. → 2.0 (add trailing zero)
     while True:
-        new_t = re.sub(r'(\d)_(\d)', r'\1\2', t)
+        new_t = re.sub(r'(\d)_(\d)', r'\1\2', t)  # 1_000 → 1000 (strip underscore separators)
         if new_t == t:
             break
         t = new_t
-    t = re.sub(r'\b0x([0-9a-fA-F]+)\b', lambda m: str(int(m.group(1), 16)), t)
-    t = re.sub(r'(?<=:\s)0+(\d+)(?=[,\s}\]\n])', r'\1', t)
+    t = re.sub(r'\b0x([0-9a-fA-F]+)\b', lambda m: str(int(m.group(1), 16)), t)  # 0x1F → 31
+    t = re.sub(r'(?<=:\s)0+(\d+)(?=[,\s}\]\n])', r'\1', t)  # 0042 → 42 (strip leading zeros after colon)
     t = _quote_leading_zero_numbers(t)
-    t = re.sub(r'-?Infinity\b', 'null', t)
-    t = re.sub(r'\bNaN\b', 'null', t)
+    t = re.sub(r'-?Infinity\b', 'null', t)  # Infinity / -Infinity → null
+    t = re.sub(r'\bNaN\b', 'null', t)  # NaN → null
     return t
 
 
@@ -422,20 +423,20 @@ def _is_structural_quote(t: str, pos: int) -> bool:
         return True
     if raw_after and raw_after[0] == '\n':
         return True
-    if after.startswith('+ "'):
+    if after.startswith('+ "'):  # string concatenation: "a" + "b"
         return True
-    if re.match(r'[a-zA-Z_]\w*"\s*:', after):
+    if re.match(r'[a-zA-Z_]\w*"\s*:', after):  # bare key missing opening quote: c":"d"
         return True
-    if after[0] == '"':
+    if after[0] == '"':  # followed by another quoted string like "key": or "value",
         rem = after[1:]
         close = rem.find('"')
         if close >= 0:
             trailing = rem[close + 1:].lstrip()[:1]
             if trailing in (':', ',', '}', ']', '') or not trailing:
                 return True
-    if re.match(r',\s*"[^"]*"\s*:', after):
+    if re.match(r',\s*"[^"]*"\s*:', after):  # , "key": pattern (next key-value pair)
         return True
-    if re.match(r',\s*"', after):
+    if re.match(r',\s*"', after):  # , " pattern — check if it starts a key-value pair
         rest = after[1:].lstrip()
         if rest.startswith('"'):
             rem = rest[1:]
@@ -604,7 +605,7 @@ def _quote_bare_words(t: str) -> str:
             result.append(ch)
             i += 1
             continue
-        m = re.match(r'[a-zA-Z_][a-zA-Z0-9_\-]*', t[i:])
+        m = re.match(r'[a-zA-Z_][a-zA-Z0-9_\-]*', t[i:])  # match bare word (letters, digits, hyphens)
         if m:
             word = m.group(0)
             if word in ('true', 'false', 'null'):
@@ -696,14 +697,16 @@ def deterministic_repair(text: str) -> str:
     """
     t = text.strip()
 
-    t = re.sub(r'^```(?:json)?\s*\n?', '', t)
-    t = re.sub(r'\n?```\s*$', '', t)
+    t = re.sub(r'^```(?:json)?\s*\n?', '', t)  # strip opening markdown fence: ```json
+    t = re.sub(r'\n?```\s*$', '', t)  # strip closing markdown fence: ```
 
+    # unwrap JSONP callback: functionName({...}); → {...}
     m = re.match(r'^[a-zA-Z_]\w*\s*\((.*)\)\s*;?\s*$', t, re.DOTALL)
     if m and '{' not in t and '[' not in t:
         t = m.group(1).strip()
 
     if t and '{' not in t and '[' not in t:
+        # standalone bare word with no JSON structure → wrap as quoted string
         if '"' not in t and re.match(r'^[a-zA-Z_][\w\s]*$', t):
             return '"' + t + '"'
         if t.endswith('"') and not t.startswith('"') and t.count('"') == 1:
@@ -743,13 +746,14 @@ def deterministic_repair(text: str) -> str:
         if '"' in t and ':' in t:
             t = '{' + t + '}'
 
-    t = re.sub(r',\s*,+', ',', t)
+    t = re.sub(r',\s*,+', ',', t)  # collapse double/triple commas: ,, → ,
 
-    t = re.sub(r'\bTrue\b', 'true', t)
-    t = re.sub(r'\bFalse\b', 'false', t)
-    t = re.sub(r'\bNone\b', 'null', t)
-    t = re.sub(r'\bundefined\b', 'null', t)
+    t = re.sub(r'\bTrue\b', 'true', t)  # Python True → JSON true
+    t = re.sub(r'\bFalse\b', 'false', t)  # Python False → JSON false
+    t = re.sub(r'\bNone\b', 'null', t)  # Python None → JSON null
+    t = re.sub(r'\bundefined\b', 'null', t)  # JS undefined → JSON null
 
+    # MongoDB extended JSON: ObjectId("abc") → "abc", ISODate("...") → "..."
     t = re.sub(r'\b[A-Z][a-zA-Z]*\("([^"]*)"\)', r'"\1"', t)
 
     t = _fix_multiline_strings(t)
@@ -767,68 +771,90 @@ def deterministic_repair(text: str) -> str:
         t = _strip_ellipsis(t)
         t = re.sub(r',\s*,+', ',', t)
 
+    # join string concatenation: "a" + "b" → "ab" (repeat until no more joins)
     while True:
         new_t = re.sub(r'"([^"\\]*(?:\\.[^"\\]*)*)"\s*\+\s*"([^"\\]*(?:\\.[^"\\]*)*)"', r'"\1\2"', t)
         if new_t == t:
             break
         t = new_t
 
+    # quote unquoted object keys: {name: → {"name":
     t = re.sub(r'(?<=[{,\n])\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*:', r' "\1":', t)
+    # quote numeric object keys: {2: → {"2":
     t = re.sub(r'(?<=[{,\n])\s*(\d+)\s*:', r' "\1":', t)
 
+    # insert missing colon between key and value: "key" "val" → "key": "val"
     t = re.sub(r'^(\s*"(?:[^"\\]|\\.)*")\s+(")', r'\1: \2', t, flags=re.MULTILINE)
+    # "key" 123 → "key": 123
     t = re.sub(r'^(\s*"(?:[^"\\]|\\.)*")\s+(\d)', r'\1: \2', t, flags=re.MULTILINE)
+    # "key" true → "key": true
     t = re.sub(r'^(\s*"(?:[^"\\]|\\.)*")\s+(true|false|null)', r'\1: \2', t, flags=re.MULTILINE)
+    # same missing-colon fixes after { or , instead of line start
     t = re.sub(r'(?<=[{,])\s*("(?:[^"\\]|\\.)*")\s+(")', r' \1: \2', t)
     t = re.sub(r'(?<=[{,])\s*("(?:[^"\\]|\\.)*")\s+(\d)', r' \1: \2', t)
     t = re.sub(r'(?<=[{,])\s*("(?:[^"\\]|\\.)*")\s+(true|false|null)', r' \1: \2', t)
+    # "key" { → "key": { (missing colon before nested object)
     t = re.sub(r'(")\s+(\{)', r'\1: \2', t)
+    # "key" [ → "key": [ (missing colon before nested array)
     t = re.sub(r'(")\s+(\[)', r'\1: \2', t)
 
     t = _quote_bare_words(t)
 
+    # insert null for empty values: {"key": } → {"key": null}
     t = re.sub(r'(:\s*)([\}\]])', r'\1null\2', t)
+    # {"key": , → {"key": null,
     t = re.sub(r'(:\s*)(,)', r'\1null\2', t)
 
-    t = re.sub(r'(")\s*\n(\s*")', r'\1,\n\2', t)
-    t = re.sub(r'(\d)\s*\n(\s*")', r'\1,\n\2', t)
-    t = re.sub(r'(true|false|null)\s*\n(\s*")', r'\1,\n\2', t)
-    t = re.sub(r'(\})\s*\n(\s*\{)', r'\1,\n\2', t)
-    t = re.sub(r'(\])\s*\n(\s*\[)', r'\1,\n\2', t)
-    t = re.sub(r'(\})\s*\n(\s*")', r'\1,\n\2', t)
-    t = re.sub(r'(\])\s*\n(\s*")', r'\1,\n\2', t)
+    # insert missing commas between newline-separated values
+    t = re.sub(r'(")\s*\n(\s*")', r'\1,\n\2', t)  # "val"\n"key" → "val",\n"key"
+    t = re.sub(r'(\d)\s*\n(\s*")', r'\1,\n\2', t)  # 123\n"key" → 123,\n"key"
+    t = re.sub(r'(true|false|null)\s*\n(\s*")', r'\1,\n\2', t)  # true\n"key" → true,\n"key"
+    t = re.sub(r'(\})\s*\n(\s*\{)', r'\1,\n\2', t)  # }\n{ → },\n{
+    t = re.sub(r'(\])\s*\n(\s*\[)', r'\1,\n\2', t)  # ]\n[ → ],\n[
+    t = re.sub(r'(\})\s*\n(\s*")', r'\1,\n\2', t)  # }\n"key" → },\n"key"
+    t = re.sub(r'(\])\s*\n(\s*")', r'\1,\n\2', t)  # ]\n"key" → ],\n"key"
 
+    # insert missing } before { when digit precedes new object (truncated object)
     t = re.sub(r'(\d),?(\s*\{)', r'\1},\2', t)
+    # insert missing commas between adjacent structures: }{ → },{  ][ → ],[
     t = re.sub(r'(\})(\s*\{)', r'\1,\2', t)
     t = re.sub(r'(\])(\s*\[)', r'\1,\2', t)
     t = re.sub(r'(\})(\s*\[)', r'\1,\2', t)
     t = re.sub(r'(\])(\s*\{)', r'\1,\2', t)
 
-    t = re.sub(r'(")\s+(")', r'\1, \2', t)
-    t = re.sub(r'(\])\s+(")', r'\1, \2', t)
-    t = re.sub(r'(\])\s+(\[)', r'\1, \2', t)
-    t = re.sub(r'(\})\s+(")', r'\1, \2', t)
-    t = re.sub(r'(\})\s+(\{)', r'\1, \2', t)
-    t = re.sub(r'(\d)\s+(")', r'\1, \2', t)
-    t = re.sub(r'(true|false|null)\s+(")', r'\1, \2', t)
+    # insert missing commas between space-separated values (no newline)
+    t = re.sub(r'(")\s+(")', r'\1, \2', t)  # "a" "b" → "a", "b"
+    t = re.sub(r'(\])\s+(")', r'\1, \2', t)  # ] "key" → ], "key"
+    t = re.sub(r'(\])\s+(\[)', r'\1, \2', t)  # ] [ → ], [
+    t = re.sub(r'(\})\s+(")', r'\1, \2', t)  # } "key" → }, "key"
+    t = re.sub(r'(\})\s+(\{)', r'\1, \2', t)  # } { → }, {
+    t = re.sub(r'(\d)\s+(")', r'\1, \2', t)  # 123 "key" → 123, "key"
+    t = re.sub(r'(true|false|null)\s+(")', r'\1, \2', t)  # true "key" → true, "key"
 
+    # fix truncated exponents: 2e+ → 2e+0, 2E- → 2E-0
     t = re.sub(r'(\d[eE][+\-]?)(?=[,\s\]\}]|$)', r'\g<1>0', t)
+    # fix bare minus sign: - → -0
     t = re.sub(r'-(?=[,\s\]\}]|$)', '-0', t)
 
     t = _fix_numbers(t)
     t = _escape_control_chars(t)
+    # escape invalid backslashes: \q → \\q (only valid JSON escapes are "\/bfnrtu)
     t = re.sub(r'(?<!\\)\\(?!["\\/bfnrtu])', r'\\\\', t)
 
     t = _strip_bare_escapes(t)
     t = _close_truncated_strings(t)
     t = _auto_close_brackets(t)
 
+    # second pass: insert null for empty values created by auto-close
     t = re.sub(r'(:\s*)([\}\]])', r'\1null\2', t)
+    # lone key in object with no value: {"key"} → {"key":null}
     t = re.sub(r'^(\s*\{\s*)("(?:[^"\\]|\\.)*")(\s*\}\s*)$', r'\1\2:null\3', t)
 
+    # remove trailing commas before closing brackets: [1,] → [1]
     for _ in range(3):
         t = re.sub(r',(\s*[}\]])', r'\1', t)
 
+    # remove leading commas after opening brackets: [, 1] → [1]
     t = re.sub(r'([\[{])(\s*),(\s*)', r'\1\2\3', t)
 
     return t
