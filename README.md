@@ -97,22 +97,33 @@ repaired = json.loads(result["repaired_json"])
 
 The deterministic parser handles these error types without any LLM call:
 
-- Missing/trailing commas
+- Missing/trailing/leading commas
 - Single quotes → double quotes
 - Unquoted keys
-- Python literals (`True`/`False`/`None` → `true`/`false`/`null`)
+- Python literals (`True`/`False`/`None`/`undefined` → `true`/`false`/`null`)
 - Markdown code fences and preamble text
 - Comments (`//` and `/* */`)
 - Multiline strings (real newlines inside string values)
 - Missing colons between keys and values
 - Missing closing quotes
 - Non-standard numbers (`.75`, `0x1F`, `1_000`, `0042`, `Infinity`, `NaN`)
+- Trailing decimals and exponents (`2.` → `2.0`, `2e` → `2e0`, `2e+` → `2e+0`)
+- Leading-zero numbers quoted as strings (`0789` → `"0789"`)
 - Unclosed brackets/braces
+- Mismatched bracket types (`}` inside `[]` → `]`, `]` inside `{}` → `}`)
 - Unescaped control characters and backslashes
+- Ellipsis removal (`[1,2,3,...]` → `[1,2,3]`)
+- Empty/missing values (`{"key": }` → `{"key": null}`)
+- JSONP unwrapping (`callback({})` → `{}`, `callback(2)` → `2`)
+- MongoDB extended JSON (`ObjectId("123")` → `"123"`)
+- Truncated strings and key-value pairs
+- Bare escape sequences outside strings
 
 ## Benchmark results
 
-52/52 test cases pass (27 test + 25 validation).
+242/242 test cases pass — 52 internal (27 test + 25 validation) and 190 external cases from three open-source libraries.
+
+### Internal suite (52 cases with Pydantic schemas)
 
 | Tier | Cases | Avg Latency |
 |---|---|---|
@@ -120,6 +131,14 @@ The deterministic parser handles these error types without any LLM call:
 | Deterministic + coerce | 2 (4%) | <1ms |
 | Snippet LLM | 1 (2%) | ~2s |
 | Full LLM | 4 (8%) | ~3-30s |
+
+### External suite (190 cases from josdejong/jsonrepair, mangiucugna/json_repair, RyanMarcus/dirty-json)
+
+| Tier | Cases | Avg Latency |
+|---|---|---|
+| Deterministic | 159 (84%) | <1ms |
+| Snippet LLM | 24 (13%) | ~0.8s |
+| Full LLM | 7 (4%) | ~2.7s |
 
 ## Project structure
 
@@ -131,6 +150,7 @@ scripts/
 tests/
   cases/      — 27 test cases with schemas
   validation/ — 25 validation cases (ProductCard, SupplierCard)
+  external/   — 190 cross-library test cases (josdejong, mangiucugna, dirty-json)
   benchmark.py — benchmark runner (supports REPAIR_URL / REPAIR_API_KEY env vars)
 ```
 

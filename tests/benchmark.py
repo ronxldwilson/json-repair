@@ -90,11 +90,8 @@ def validate_structure(repaired: str, schema_path: Path, class_name: str) -> tup
         return False, f"Pydantic validation failed: {e}"
 
 
-def run_external_benchmark():
-    """Run deterministic-only benchmark against external test cases (no server needed)."""
-    sys.path.insert(0, str(TESTS_DIR.parent))
-    from scripts.repair import deterministic_repair
-
+def run_external_benchmark(base_url: str | None = None, api_key: str | None = None):
+    """Run external test cases — deterministic-only locally, or full pipeline via server."""
     cases_path = TESTS_DIR / "external" / "extracted_cases.json"
     if not cases_path.exists():
         print(f"External cases not found: {cases_path}")
@@ -103,30 +100,65 @@ def run_external_benchmark():
     with open(cases_path) as f:
         cases = json.load(f)
 
+    use_server = base_url is not None
+    if not use_server:
+        sys.path.insert(0, str(TESTS_DIR.parent))
+        from scripts.repair import deterministic_repair
+
+    mode = f"server ({base_url})" if use_server else "deterministic only"
     results = []
-    print(f"Running {len(cases)} external cases (deterministic only, no server needed)\n")
-    print(f"{'#':<4} {'Input':<50} {'Result':<7} {'Match'}")
-    print("-" * 80)
+    total_time = 0
+    print(f"Running {len(cases)} external cases ({mode})\n")
+    if use_server:
+        print(f"{'#':<4} {'Input':<50} {'Result':<7} {'Method':<14} {'Time':>6}  {'Match'}")
+    else:
+        print(f"{'#':<4} {'Input':<50} {'Result':<7} {'Match'}")
+    print("-" * (95 if use_server else 80))
 
     for i, case in enumerate(cases, 1):
         inp = case["input"]
         expected = case.get("expected", "")
         source = case.get("source", "")
+        display = inp[:48].replace('\n', '\\n')
 
-        repaired = deterministic_repair(inp)
-        try:
-            json.loads(repaired)
-            valid = True
-        except json.JSONDecodeError:
-            valid = False
+        if use_server:
+            try:
+                result, elapsed = repair_via_api(base_url, inp, {}, api_key)
+                total_time += elapsed
+                repaired = result.get("repaired_json", "")
+                method = result.get("method", "llm")
+                valid = result.get("valid", False)
+                if not valid:
+                    try:
+                        json.loads(repaired)
+                        valid = True
+                    except json.JSONDecodeError:
+                        pass
+            except Exception as e:
+                repaired = ""
+                method = "error"
+                valid = False
+                elapsed = 0
+        else:
+            repaired = deterministic_repair(inp)
+            method = "deterministic"
+            elapsed = 0
+            try:
+                json.loads(repaired)
+                valid = True
+            except json.JSONDecodeError:
+                valid = False
 
         matches = repaired.strip() == expected.strip() if expected else False
 
         status = "OK" if valid else "FAIL"
         match_str = "exact" if matches else ("valid" if valid else "—")
-        display = inp[:48].replace('\n', '\\n')
 
-        print(f"{i:<4} {display:<50} {status:<7} {match_str}")
+        if use_server:
+            print(f"{i:<4} {display:<50} {status:<7} {method:<14} {elapsed:>5.1f}s  {match_str}")
+        else:
+            print(f"{i:<4} {display:<50} {status:<7} {match_str}")
+
         results.append({
             "input": inp,
             "expected": expected,
@@ -134,19 +166,28 @@ def run_external_benchmark():
             "valid_json": valid,
             "exact_match": matches,
             "source": source,
+            **({"method": method, "time_s": round(elapsed, 2)} if use_server else {}),
         })
 
-    print("-" * 80)
+    print("-" * (95 if use_server else 80))
 
     valid_count = sum(1 for r in results if r["valid_json"])
     exact_count = sum(1 for r in results if r["exact_match"])
     print(f"\nResults: {valid_count}/{len(results)} valid JSON, {exact_count}/{len(results)} exact match")
+    if use_server:
+        det_count = sum(1 for r in results if r.get("method", "").startswith("deterministic"))
+        llm_count = sum(1 for r in results if r.get("method") in ("llm",) or (r.get("method", "").startswith("snippet")))
+        avg_time = total_time / len(results) if results else 0
+        print(f"Methods: {det_count} deterministic, {llm_count} LLM/snippet")
+        print(f"Total time: {total_time:.1f}s, Avg: {avg_time:.1f}s per case")
 
     report_path = TESTS_DIR / "benchmark_results_external.json"
     with open(report_path, "w") as f:
         json.dump({
             "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
             "set": "external",
+            "mode": "server" if use_server else "deterministic",
+            **({"base_url": base_url} if use_server else {}),
             "total_cases": len(results),
             "valid_json": valid_count,
             "exact_match": exact_count,
@@ -272,7 +313,8 @@ def main():
     args = parser.parse_args()
 
     if args.external:
-        run_external_benchmark()
+        use_server = args.api_key or os.environ.get("REPAIR_URL") or "--url" in sys.argv
+        run_external_benchmark(args.url if use_server else None, args.api_key)
     else:
         run_benchmark(args.url, args.api_key, args.filter, args.validation)
 
