@@ -1,14 +1,13 @@
 # JSON Repair
 
-HTTP service that fixes broken JSON using a local LLM (Qwen2.5-Coder-1.5B) with grammar-constrained generation via llama.cpp. No external API calls — runs fully offline.
+HTTP service that fixes broken JSON using a 4-tier repair pipeline: deterministic parser → type coercion → targeted snippet LLM → full LLM fallback. Uses Qwen2.5-Coder-1.5B via llama.cpp with grammar-constrained generation. No external API calls — runs fully offline.
 
 ## How it works
 
-1. You send broken JSON + a JSON Schema (or Pydantic `model_json_schema()` output)
-2. The LLM repairs syntax errors (missing quotes, commas, trailing commas, `True` → `true`, etc.)
-3. llama.cpp's grammar engine forces the output to conform to the schema — guaranteeing valid JSON with correct structure
-
-The model stays loaded in RAM. Each repair is an HTTP call (~2-5 seconds on CPU).
+1. **Deterministic repair** (~98% of cases, <1ms) — regex/string-based fixes for missing commas, quotes, brackets, Python literals, multiline strings, number formats, etc.
+2. **Type coercion** — reads schema validation errors and surgically fixes type mismatches (int→string, etc.)
+3. **Snippet LLM** — sends only the 200-char error window to the LLM instead of the full JSON
+4. **Full LLM fallback** — regenerates entire JSON with grammar-constrained generation to match the schema
 
 ## Quick start
 
@@ -91,14 +90,13 @@ result = json.loads(urlopen(req, timeout=120).read())
 repaired = json.loads(result["repaired_json"])
 ```
 
-## CLI usage
+## Project structure
 
-The CLI tool is also included for local file repair:
-
-```bash
-python scripts/fix_json.py broken.json -v --schema schemas/test_expected.py:Person
-python scripts/fix_json.py broken.json -i --schema schema.json  # in-place
-python scripts/fix_json.py broken.json -v --stop-server          # stop llama-server after
+```
+scripts/
+  repair.py   — deterministic repair + schema validation + type coercion
+  llm.py      — llama-server interaction (grammar, schema, snippet repair)
+  server.py   — FastAPI app + 4-tier orchestration
 ```
 
 ## Schema is required for nested structures
@@ -139,7 +137,7 @@ ronxldwilson/json-repair:api    # FastAPI service
 
 ## Design decisions
 
+- **Deterministic first** — regex/string parser handles ~98% of cases in <1ms, LLM is a fallback
 - **No thinking/reasoning models** — pure autoregressive (Qwen2.5-Coder), prompt-in/JSON-out
-- **No code-based heuristics** — LLM + grammar constraint handles all repairs, no regex post-processing
 - **llama-server over llama-cli** — model loads once, stays in RAM, each repair is an HTTP call
 - **Grammar constraint is essential** — `json_schema` response format forces valid JSON at the token generation level
