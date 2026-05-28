@@ -14,23 +14,42 @@ from scripts.repair import (
 )
 from scripts.llm import (
     check_health,
+    configure,
     iterative_snippet_repair,
     repair_with_grammar,
     repair_with_schema,
     wait_for_server,
 )
 
+LLM_PROVIDER = os.environ.get("LLM_PROVIDER", "local")
+
 LLAMA_HOST = os.environ.get("LLAMA_HOST", "llama")
 LLAMA_PORT = os.environ.get("LLAMA_PORT", "8776")
 LLAMA_URL = f"http://{LLAMA_HOST}:{LLAMA_PORT}"
-COMPLETIONS_URL = f"{LLAMA_URL}/v1/chat/completions"
-COMPLETION_URL = f"{LLAMA_URL}/completion"
+
+EXTERNAL_API_URL = os.environ.get("EXTERNAL_API_URL", "https://api.groq.com/openai/v1")
+EXTERNAL_API_KEY = os.environ.get("EXTERNAL_API_KEY", "")
+EXTERNAL_MODEL = os.environ.get("EXTERNAL_MODEL", "llama-3.3-70b-versatile")
+
 HEALTH_URL = f"{LLAMA_URL}/health"
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    wait_for_server(HEALTH_URL)
+    if LLM_PROVIDER == "external":
+        configure(
+            provider="external",
+            completions_url=f"{EXTERNAL_API_URL}/chat/completions",
+            api_key=EXTERNAL_API_KEY,
+            model=EXTERNAL_MODEL,
+        )
+    else:
+        configure(
+            provider="local",
+            completions_url=f"{LLAMA_URL}/v1/chat/completions",
+            completion_url=f"{LLAMA_URL}/completion",
+        )
+        wait_for_server(HEALTH_URL)
     yield
 
 
@@ -67,7 +86,7 @@ def repair(req: RepairRequest):
 
     # 3. Targeted snippet repair
     try:
-        snippet_result, rounds = iterative_snippet_repair(COMPLETION_URL, deterministic_result)
+        snippet_result, rounds = iterative_snippet_repair(deterministic_result)
         if rounds > 0 and validate_against_schema(snippet_result, schema):
             return RepairResponse(repaired_json=snippet_result, valid=True, method=f"snippet({rounds})")
     except Exception:
@@ -76,9 +95,9 @@ def repair(req: RepairRequest):
     # 4. Full LLM fallback
     try:
         if schema:
-            repaired = repair_with_schema(COMPLETIONS_URL, req.broken_json, schema)
+            repaired = repair_with_schema(req.broken_json, schema)
         else:
-            repaired = repair_with_grammar(COMPLETION_URL, req.broken_json)
+            repaired = repair_with_grammar(req.broken_json)
     except Exception as e:
         raise HTTPException(status_code=502, detail=f"llama-server error: {e}")
 
@@ -88,6 +107,8 @@ def repair(req: RepairRequest):
 
 @app.get("/health")
 def health():
+    if LLM_PROVIDER == "external":
+        return {"status": "ok", "provider": "external", "model": EXTERNAL_MODEL}
     if check_health(HEALTH_URL):
-        return {"status": "ok"}
+        return {"status": "ok", "provider": "local"}
     raise HTTPException(status_code=503, detail="llama-server not ready")

@@ -19,6 +19,31 @@ Two containers:
 - **llama** — llama-server with model baked in (~1.4 GB RAM)
 - **api** — FastAPI service on port 8080
 
+### Using an external LLM API (Groq, OpenAI, Together, etc.)
+
+Skip the local llama container and use a fast external API instead. Set these env vars on the `api` service:
+
+```yaml
+environment:
+  - LLM_PROVIDER=external
+  - EXTERNAL_API_URL=https://api.groq.com/openai/v1
+  - EXTERNAL_API_KEY=gsk_...
+  - EXTERNAL_MODEL=llama-3.3-70b-versatile
+```
+
+Any OpenAI-compatible chat/completions API works. With `LLM_PROVIDER=external`, the llama container is not needed — you can run just the `api` service:
+
+```bash
+docker compose up -d api
+```
+
+| Env var | Default | Description |
+|---|---|---|
+| `LLM_PROVIDER` | `local` | `local` (llama container) or `external` (API) |
+| `EXTERNAL_API_URL` | `https://api.groq.com/openai/v1` | Base URL (without `/chat/completions`) |
+| `EXTERNAL_API_KEY` | — | Bearer token for the API |
+| `EXTERNAL_MODEL` | `llama-3.3-70b-versatile` | Model name to send in requests |
+
 ## API
 
 ### `POST /repair`

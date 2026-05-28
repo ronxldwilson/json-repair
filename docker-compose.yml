@@ -28,6 +28,11 @@ services:
     environment:
       - LLAMA_HOST=llama
       - LLAMA_PORT=8776
+      # To use an external LLM API (Groq, OpenAI, etc.) instead of local llama:
+      # - LLM_PROVIDER=external
+      # - EXTERNAL_API_URL=https://api.groq.com/openai/v1
+      # - EXTERNAL_API_KEY=gsk_...
+      # - EXTERNAL_MODEL=llama-3.3-70b-versatile
     depends_on:
       llama:
         condition: service_healthy

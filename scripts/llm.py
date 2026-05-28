@@ -1,4 +1,4 @@
-"""LLM-based JSON repair via llama-server."""
+"""LLM-based JSON repair via llama-server or external OpenAI-compatible API (Groq, etc.)."""
 
 import json
 import re
@@ -9,6 +9,44 @@ from urllib.request import Request, urlopen
 SYSTEM_PROMPT = "Fix this JSON. Return only corrected JSON, no explanation."
 SNIPPET_PROMPT = "Fix the JSON syntax error in this snippet. Return ONLY the fixed snippet, nothing else."
 SNIPPET_WINDOW = 200
+
+# module-level config — set via configure()
+_provider = "local"
+_completions_url = None
+_completion_url = None
+_api_key = None
+_model = None
+
+
+def configure(provider: str, completions_url: str, completion_url: str | None = None,
+              api_key: str | None = None, model: str | None = None):
+    """Set the LLM backend config. Called once at startup from server.py.
+
+    provider="local"    → uses llama-server (completion + chat/completions endpoints)
+    provider="external" → uses any OpenAI-compatible API (Groq, OpenAI, Together, etc.)
+
+    Example:
+        configure("external",
+                  completions_url="https://api.groq.com/openai/v1/chat/completions",
+                  api_key="gsk_...", model="llama-3.3-70b-versatile")
+    """
+    global _provider, _completions_url, _completion_url, _api_key, _model
+    _provider = provider
+    _completions_url = completions_url
+    _completion_url = completion_url
+    _api_key = api_key
+    _model = model
+
+
+def _post(url: str, body: dict, timeout: int = 120) -> dict:
+    """POST JSON to a URL, adding Bearer auth if _api_key is set."""
+    data = json.dumps(body).encode()
+    headers = {"Content-Type": "application/json"}
+    if _api_key:
+        headers["Authorization"] = f"Bearer {_api_key}"
+    req = Request(url, data=data, headers=headers)
+    resp = urlopen(req, timeout=timeout)
+    return json.loads(resp.read())
 
 JSON_GRAMMAR = r'''
 root   ::= object
@@ -77,24 +115,24 @@ def check_health(health_url: str) -> bool:
         return False
 
 
-def repair_with_schema(completions_url: str, broken_text: str, schema: dict) -> str:
+def repair_with_schema(broken_text: str, schema: dict) -> str:
     """Full LLM repair using json_schema response format to guarantee structure.
 
-    Sends the broken JSON to llama-server's /v1/chat/completions endpoint with
-    a json_schema constraint. The model regenerates the entire JSON from scratch,
-    and the grammar constraint ensures the output matches the provided schema
-    at the token generation level — every token is forced to be schema-valid.
+    Sends the broken JSON to the chat/completions endpoint with a json_schema
+    constraint. The model regenerates the entire JSON from scratch, and the
+    grammar constraint ensures the output matches the provided schema.
 
-    This is the most expensive tier (~3-30s) but handles cases where the JSON
-    is too corrupted for deterministic or snippet repair.
+    Works with both local llama-server and external APIs (Groq, OpenAI, etc.).
+    External APIs that don't support json_schema fall back to json_object mode
+    with the schema embedded in the system prompt.
 
     Example:
         schema = {"type": "object", "properties": {"name": {"type": "string"}}, "required": ["name"]}
-        repair_with_schema(url, '{"name: John}', schema)
+        repair_with_schema('{"name: John}', schema)
         # → '{"name": "John"}'
     """
     body = {
-        "model": "local",
+        "model": _model or "local",
         "messages": [
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": broken_text},
@@ -106,28 +144,50 @@ def repair_with_schema(completions_url: str, broken_text: str, schema: dict) -> 
             "json_schema": {"name": "repaired", "schema": schema},
         },
     }
-    data = json.dumps(body).encode()
-    req = Request(completions_url, data=data, headers={"Content-Type": "application/json"})
-    resp = urlopen(req, timeout=120)
-    result = json.loads(resp.read())
-    return result["choices"][0]["message"]["content"].strip()
+    try:
+        result = _post(_completions_url, body)
+        return result["choices"][0]["message"]["content"].strip()
+    except Exception:
+        if _provider == "local":
+            raise
+        # fallback: some external APIs don't support json_schema, use json_object + schema in prompt
+        body["messages"][0]["content"] = (
+            f"{SYSTEM_PROMPT}\nOutput must match this JSON schema:\n{json.dumps(schema)}"
+        )
+        body["response_format"] = {"type": "json_object"}
+        result = _post(_completions_url, body)
+        return result["choices"][0]["message"]["content"].strip()
 
 
-def repair_with_grammar(completion_url: str, broken_text: str) -> str:
-    """LLM repair using GBNF grammar constraint (no schema, just valid JSON syntax).
+def repair_with_grammar(broken_text: str) -> str:
+    """LLM repair with no schema — uses GBNF grammar (local) or json_object mode (external).
 
-    Uses llama-server's /completion endpoint (not chat) with a GBNF grammar that
-    enforces valid JSON structure. The prompt is formatted in ChatML template
-    (<|im_start|>/<|im_end|> tags) since we're bypassing the chat API.
+    Local: uses llama-server's /completion endpoint with a GBNF grammar that forces
+    valid JSON at the token level. Prompt is ChatML-formatted.
+    External: uses chat/completions with response_format=json_object.
 
     Used as a fallback when no schema is provided — guarantees syntactically valid
-    JSON but can't enforce a specific structure (nested objects may get rearranged).
+    JSON but can't enforce a specific structure.
 
     Example:
-        repair_with_grammar(url, '{"name: "John", age: 30}')
+        repair_with_grammar('{"name: "John", age: 30}')
         # → '{"name": "John", "age": 30}'
     """
-    # ChatML template: system/user/assistant turns for the raw /completion endpoint
+    if _provider == "external":
+        body = {
+            "model": _model,
+            "messages": [
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": broken_text},
+            ],
+            "temperature": 0,
+            "max_tokens": 4096,
+            "response_format": {"type": "json_object"},
+        }
+        result = _post(_completions_url, body)
+        return result["choices"][0]["message"]["content"].strip()
+
+    # local llama-server: use raw /completion with GBNF grammar + ChatML template
     prompt = (
         f"<|im_start|>system\n{SYSTEM_PROMPT}<|im_end|>\n"
         f"<|im_start|>user\n{broken_text}<|im_end|>\n"
@@ -139,28 +199,23 @@ def repair_with_grammar(completion_url: str, broken_text: str) -> str:
         "n_predict": 4096,
         "grammar": JSON_GRAMMAR,
     }
-    data = json.dumps(body).encode()
-    req = Request(completion_url, data=data, headers={"Content-Type": "application/json"})
-    resp = urlopen(req, timeout=120)
-    result = json.loads(resp.read())
+    result = _post(_completion_url, body)
     return result["content"].strip()
 
 
-def repair_snippet(completion_url: str, text: str, error: json.JSONDecodeError) -> str:
+def repair_snippet(text: str, error: json.JSONDecodeError) -> str:
     """Targeted snippet repair — sends only a 200-char window around the error to the LLM.
 
     Instead of sending the entire (potentially huge) JSON to the model, this extracts
     a ±200 character window centered on the parse error position. The LLM fixes just
     that snippet, which is then spliced back into the original text.
 
-    Much faster than full LLM repair (~0.8s vs ~3-30s) because the model only
-    processes and generates a small amount of text. No grammar constraint is used
-    since the snippet may not be a complete JSON structure.
+    Works with both local (raw /completion) and external (chat/completions) APIs.
 
     Example:
         text = '{"name": "John", "age": 30, "items": [1 2 3]}'
         error = json.JSONDecodeError("Expecting ',' delimiter", text, 39)
-        repair_snippet(url, text, error)
+        repair_snippet(text, error)
         # → '{"name": "John", "age": 30, "items": [1, 2, 3]}'
     """
     pos = error.pos
@@ -169,24 +224,34 @@ def repair_snippet(completion_url: str, text: str, error: json.JSONDecodeError) 
     end = min(len(text), pos + SNIPPET_WINDOW)
     snippet = text[start:end]
 
-    # ChatML prompt with the error message and snippet context
-    prompt = (
-        f"<|im_start|>system\n{SNIPPET_PROMPT}<|im_end|>\n"
-        f"<|im_start|>user\n"
-        f"Error: {error.msg} at position {pos - start}\n"
-        f"Snippet:\n{snippet}<|im_end|>\n"
-        f"<|im_start|>assistant\n"
-    )
-    body = {
-        "prompt": prompt,
-        "temperature": 0,
-        "n_predict": SNIPPET_WINDOW * 2,
-    }
-    data = json.dumps(body).encode()
-    req = Request(completion_url, data=data, headers={"Content-Type": "application/json"})
-    resp = urlopen(req, timeout=30)
-    result = json.loads(resp.read())
-    fixed_snippet = result["content"].strip()
+    user_content = f"Error: {error.msg} at position {pos - start}\nSnippet:\n{snippet}"
+
+    if _provider == "external":
+        body = {
+            "model": _model,
+            "messages": [
+                {"role": "system", "content": SNIPPET_PROMPT},
+                {"role": "user", "content": user_content},
+            ],
+            "temperature": 0,
+            "max_tokens": SNIPPET_WINDOW * 2,
+        }
+        result = _post(_completions_url, body, timeout=30)
+        fixed_snippet = result["choices"][0]["message"]["content"].strip()
+    else:
+        # local llama-server: use raw /completion with ChatML template
+        prompt = (
+            f"<|im_start|>system\n{SNIPPET_PROMPT}<|im_end|>\n"
+            f"<|im_start|>user\n{user_content}<|im_end|>\n"
+            f"<|im_start|>assistant\n"
+        )
+        body = {
+            "prompt": prompt,
+            "temperature": 0,
+            "n_predict": SNIPPET_WINDOW * 2,
+        }
+        result = _post(_completion_url, body, timeout=30)
+        fixed_snippet = result["content"].strip()
 
     # strip markdown fences the LLM sometimes wraps around its response
     fixed_snippet = re.sub(r'^```(?:json)?\s*\n?', '', fixed_snippet)  # opening fence: ```json
@@ -196,7 +261,7 @@ def repair_snippet(completion_url: str, text: str, error: json.JSONDecodeError) 
     return text[:start] + fixed_snippet + text[end:]
 
 
-def iterative_snippet_repair(completion_url: str, text: str, max_rounds: int = 5) -> tuple[str, int]:
+def iterative_snippet_repair(text: str, max_rounds: int = 5) -> tuple[str, int]:
     """Run snippet repair in a loop until the JSON parses or max_rounds is reached.
 
     Each round: try json.loads → if it fails, call repair_snippet on the error.
@@ -205,7 +270,7 @@ def iterative_snippet_repair(completion_url: str, text: str, max_rounds: int = 5
 
     Example:
         text = '{"a": 1 "b": 2 "c": [3 4]}'  # missing commas in two places
-        fixed, rounds = iterative_snippet_repair(url, text, max_rounds=5)
+        fixed, rounds = iterative_snippet_repair(text, max_rounds=5)
         # round 1 fixes "1 "b" → "1, "b", round 2 fixes "3 4" → "3, 4"
         # → ('{"a": 1, "b": 2, "c": [3, 4]}', 2)
     """
@@ -214,6 +279,6 @@ def iterative_snippet_repair(completion_url: str, text: str, max_rounds: int = 5
             json.loads(text)
             return text, round_num - 1
         except json.JSONDecodeError as e:
-            text = repair_snippet(completion_url, text, e)
+            text = repair_snippet(text, e)
 
     return text, max_rounds
