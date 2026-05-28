@@ -380,18 +380,184 @@ def _validate_against_schema(json_str: str, schema: dict | None) -> bool:
         return False
 
 
+def _coerce_schema_errors(json_str: str, schema: dict) -> str | None:
+    """Try to fix schema validation errors by coercing field types."""
+    try:
+        from jsonschema import Draft202012Validator
+    except ImportError:
+        return None
+
+    try:
+        parsed = json.loads(json_str)
+    except (json.JSONDecodeError, ValueError):
+        return None
+
+    if not isinstance(parsed, dict):
+        return None
+
+    validator = Draft202012Validator(schema)
+    errors = list(validator.iter_errors(parsed))
+    if not errors:
+        return None
+
+    changed = False
+    for error in errors:
+        path = list(error.absolute_path)
+
+        # Navigate to the parent node and field
+        if path:
+            node = parsed
+            for key in path[:-1]:
+                if isinstance(node, dict) and key in node:
+                    node = node[key]
+                elif isinstance(node, list) and isinstance(key, int) and key < len(node):
+                    node = node[key]
+                else:
+                    node = None
+                    break
+            if node is None:
+                continue
+            field = path[-1]
+        else:
+            continue
+
+        # Get the expected type from schema or anyOf variants
+        expected_types = set()
+        err_schema = error.schema
+        if "type" in err_schema:
+            expected_types.add(err_schema["type"])
+        for variant in err_schema.get("anyOf", []):
+            if "type" in variant:
+                expected_types.add(variant["type"])
+
+        if isinstance(node, dict) and field in node:
+            val = node[field]
+
+            # Dict with additionalProperties type constraint — coerce all values
+            ap_type = None
+            for s in [err_schema] + err_schema.get("anyOf", []):
+                if s.get("type") == "object" and "additionalProperties" in s:
+                    ap_type = s["additionalProperties"].get("type")
+                    break
+            if ap_type and isinstance(val, dict):
+                for k, v in val.items():
+                    if ap_type == "string" and not isinstance(v, str):
+                        val[k] = str(v).lower() if isinstance(v, bool) else str(v)
+                        changed = True
+                continue
+
+            if "string" in expected_types and not isinstance(val, str):
+                node[field] = str(val).lower() if isinstance(val, bool) else str(val)
+                changed = True
+            elif "integer" in expected_types and isinstance(val, str):
+                try:
+                    node[field] = int(val)
+                    changed = True
+                except ValueError:
+                    pass
+            elif "number" in expected_types and isinstance(val, str):
+                try:
+                    node[field] = float(val)
+                    changed = True
+                except ValueError:
+                    pass
+            elif "boolean" in expected_types and isinstance(val, str):
+                if val.lower() in ("true", "1", "yes"):
+                    node[field] = True
+                    changed = True
+                elif val.lower() in ("false", "0", "no"):
+                    node[field] = False
+                    changed = True
+            elif "array" in expected_types and not isinstance(val, list):
+                node[field] = [val]
+                changed = True
+
+    if not changed:
+        return None
+
+    result = json.dumps(parsed, ensure_ascii=False)
+    try:
+        from jsonschema import validate, ValidationError
+        validate(json.loads(result), schema)
+        return result
+    except Exception:
+        return None
+
+
+SNIPPET_PROMPT = "Fix the JSON syntax error in this snippet. Return ONLY the fixed snippet, nothing else."
+WINDOW = 200
+
+
+def _repair_snippet_via_llm(text: str, error: json.JSONDecodeError) -> str:
+    """Ask the LLM to fix a small window around the JSON parse error."""
+    pos = error.pos
+    start = max(0, pos - WINDOW)
+    end = min(len(text), pos + WINDOW)
+    snippet = text[start:end]
+
+    prompt = (
+        f"<|im_start|>system\n{SNIPPET_PROMPT}<|im_end|>\n"
+        f"<|im_start|>user\n"
+        f"Error: {error.msg} at position {pos - start}\n"
+        f"Snippet:\n{snippet}<|im_end|>\n"
+        f"<|im_start|>assistant\n"
+    )
+    body = {
+        "prompt": prompt,
+        "temperature": 0,
+        "n_predict": WINDOW * 2,
+    }
+    data = json.dumps(body).encode()
+    req = Request(COMPLETION_URL, data=data, headers={"Content-Type": "application/json"})
+    resp = urlopen(req, timeout=30)
+    result = json.loads(resp.read())
+    fixed_snippet = result["content"].strip()
+
+    # Strip markdown fences if the LLM wrapped the output
+    fixed_snippet = re.sub(r'^```(?:json)?\s*\n?', '', fixed_snippet)
+    fixed_snippet = re.sub(r'\n?```\s*$', '', fixed_snippet)
+
+    return text[:start] + fixed_snippet + text[end:]
+
+
+def _iterative_snippet_repair(text: str, max_rounds: int = 5) -> tuple[str, int]:
+    """Repeatedly fix JSON errors one snippet at a time. Returns (result, rounds_used)."""
+    for round_num in range(1, max_rounds + 1):
+        try:
+            json.loads(text)
+            return text, round_num - 1
+        except json.JSONDecodeError as e:
+            text = _repair_snippet_via_llm(text, e)
+
+    return text, max_rounds
+
+
 @app.post("/repair", response_model=RepairResponse)
 def repair(req: RepairRequest):
     schema = None
     if req.schema_dict:
         schema = resolve_refs(req.schema_dict)
 
-    # Try deterministic repair first — must pass both JSON parse and schema validation
+    # 1. Deterministic repair
     deterministic_result = deterministic_repair(req.broken_json)
     if _validate_against_schema(deterministic_result, schema):
         return RepairResponse(repaired_json=deterministic_result, valid=True, method="deterministic")
 
-    # Fall back to LLM
+    # 2. Type coercion for schema mismatches
+    if schema:
+        coerced = _coerce_schema_errors(deterministic_result, schema)
+        if coerced and _validate_against_schema(coerced, schema):
+            return RepairResponse(repaired_json=coerced, valid=True, method="deterministic+coerce")
+
+    # 3. Targeted snippet repair — fix errors one at a time with small LLM calls
+    try:
+        snippet_result, rounds = _iterative_snippet_repair(deterministic_result)
+        if rounds > 0 and _validate_against_schema(snippet_result, schema):
+            return RepairResponse(repaired_json=snippet_result, valid=True, method=f"snippet({rounds})")
+    except Exception:
+        pass
+
+    # 4. Full LLM fallback — regenerate entire JSON with schema constraint
     try:
         if schema:
             repaired = repair_with_schema(req.broken_json, schema)

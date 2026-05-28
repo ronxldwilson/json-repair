@@ -2,3 +2,6 @@ models/*.gguf
 __pycache__/
 *.pyc
 .DS_Store
+.env
+venv/
+tests/benchmark_results*.json

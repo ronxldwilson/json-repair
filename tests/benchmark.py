@@ -4,6 +4,7 @@
 import argparse
 import importlib.util
 import json
+import os
 import sys
 import time
 from pathlib import Path
@@ -198,8 +199,8 @@ def run_benchmark(base_url: str, api_key: str | None = None, case_filter: str | 
 
 def main():
     parser = argparse.ArgumentParser(description="Benchmark json-repair service")
-    parser.add_argument("--url", default="http://localhost:8080", help="Service base URL")
-    parser.add_argument("--api-key", help="API key for X-API-Key header")
+    parser.add_argument("--url", default=os.environ.get("REPAIR_URL", "http://localhost:8080"), help="Service base URL (or set REPAIR_URL env var)")
+    parser.add_argument("--api-key", default=os.environ.get("REPAIR_API_KEY"), help="API key for X-API-Key header (or set REPAIR_API_KEY env var)")
     parser.add_argument("--filter", help="Only run cases matching this string")
     parser.add_argument("--validation", action="store_true", help="Run validation set instead of test set")
     args = parser.parse_args()
