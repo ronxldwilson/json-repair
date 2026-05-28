@@ -45,9 +45,12 @@ Response:
 ```json
 {
   "repaired_json": "{\"name\": \"John Doe\", \"age\": 30, \"active\": true}",
-  "valid": true
+  "valid": true,
+  "method": "deterministic"
 }
 ```
+
+The `method` field tells you which tier resolved it: `deterministic`, `deterministic+coerce`, `snippet(N)`, or `llm`.
 
 ### `GET /health`
 
@@ -90,6 +93,34 @@ result = json.loads(urlopen(req, timeout=120).read())
 repaired = json.loads(result["repaired_json"])
 ```
 
+## What it fixes
+
+The deterministic parser handles these error types without any LLM call:
+
+- Missing/trailing commas
+- Single quotes → double quotes
+- Unquoted keys
+- Python literals (`True`/`False`/`None` → `true`/`false`/`null`)
+- Markdown code fences and preamble text
+- Comments (`//` and `/* */`)
+- Multiline strings (real newlines inside string values)
+- Missing colons between keys and values
+- Missing closing quotes
+- Non-standard numbers (`.75`, `0x1F`, `1_000`, `0042`, `Infinity`, `NaN`)
+- Unclosed brackets/braces
+- Unescaped control characters and backslashes
+
+## Benchmark results
+
+52/52 test cases pass (27 test + 25 validation).
+
+| Tier | Cases | Avg Latency |
+|---|---|---|
+| Deterministic | 45 (87%) | <1ms |
+| Deterministic + coerce | 2 (4%) | <1ms |
+| Snippet LLM | 1 (2%) | ~2s |
+| Full LLM | 4 (8%) | ~3-30s |
+
 ## Project structure
 
 ```
@@ -97,6 +128,10 @@ scripts/
   repair.py   — deterministic repair + schema validation + type coercion
   llm.py      — llama-server interaction (grammar, schema, snippet repair)
   server.py   — FastAPI app + 4-tier orchestration
+tests/
+  cases/      — 27 test cases with schemas
+  validation/ — 25 validation cases (ProductCard, SupplierCard)
+  benchmark.py — benchmark runner (supports REPAIR_URL / REPAIR_API_KEY env vars)
 ```
 
 ## Schema is required for nested structures
@@ -114,7 +149,8 @@ Without a schema, the GBNF grammar enforces valid JSON syntax but the 1.5B model
 |---|---|
 | Model RAM | ~1.4 GB |
 | KV cache (during inference) | ~23 MB |
-| Repair latency | ~2s (Apple Silicon), ~5s (4 vCPU) |
+| Deterministic repair | <1ms |
+| LLM repair | ~3-30s (4 vCPU) |
 | Docker image (llama) | ~1.4 GB |
 | Docker image (api) | ~200 MB |
 
