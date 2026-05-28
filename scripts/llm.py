@@ -41,7 +41,7 @@ def configure(provider: str, completions_url: str, completion_url: str | None = 
 def _post(url: str, body: dict, timeout: int = 120) -> dict:
     """POST JSON to a URL, adding Bearer auth if _api_key is set."""
     data = json.dumps(body).encode()
-    headers = {"Content-Type": "application/json"}
+    headers = {"Content-Type": "application/json", "User-Agent": "json-repair/1.0"}
     if _api_key:
         headers["Authorization"] = f"Bearer {_api_key}"
     req = Request(url, data=data, headers=headers)
