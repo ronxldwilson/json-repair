@@ -90,6 +90,71 @@ def validate_structure(repaired: str, schema_path: Path, class_name: str) -> tup
         return False, f"Pydantic validation failed: {e}"
 
 
+def run_external_benchmark():
+    """Run deterministic-only benchmark against external test cases (no server needed)."""
+    sys.path.insert(0, str(TESTS_DIR.parent))
+    from scripts.repair import deterministic_repair
+
+    cases_path = TESTS_DIR / "external" / "extracted_cases.json"
+    if not cases_path.exists():
+        print(f"External cases not found: {cases_path}")
+        return
+
+    with open(cases_path) as f:
+        cases = json.load(f)
+
+    results = []
+    print(f"Running {len(cases)} external cases (deterministic only, no server needed)\n")
+    print(f"{'#':<4} {'Input':<50} {'Result':<7} {'Match'}")
+    print("-" * 80)
+
+    for i, case in enumerate(cases, 1):
+        inp = case["input"]
+        expected = case.get("expected", "")
+        source = case.get("source", "")
+
+        repaired = deterministic_repair(inp)
+        try:
+            json.loads(repaired)
+            valid = True
+        except json.JSONDecodeError:
+            valid = False
+
+        matches = repaired.strip() == expected.strip() if expected else False
+
+        status = "OK" if valid else "FAIL"
+        match_str = "exact" if matches else ("valid" if valid else "—")
+        display = inp[:48].replace('\n', '\\n')
+
+        print(f"{i:<4} {display:<50} {status:<7} {match_str}")
+        results.append({
+            "input": inp,
+            "expected": expected,
+            "repaired": repaired,
+            "valid_json": valid,
+            "exact_match": matches,
+            "source": source,
+        })
+
+    print("-" * 80)
+
+    valid_count = sum(1 for r in results if r["valid_json"])
+    exact_count = sum(1 for r in results if r["exact_match"])
+    print(f"\nResults: {valid_count}/{len(results)} valid JSON, {exact_count}/{len(results)} exact match")
+
+    report_path = TESTS_DIR / "benchmark_results_external.json"
+    with open(report_path, "w") as f:
+        json.dump({
+            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            "set": "external",
+            "total_cases": len(results),
+            "valid_json": valid_count,
+            "exact_match": exact_count,
+            "results": results,
+        }, f, indent=2)
+    print(f"Report saved to {report_path}")
+
+
 def run_benchmark(base_url: str, api_key: str | None = None, case_filter: str | None = None, validation: bool = False):
     base_dir = TESTS_DIR / "validation" if validation else TESTS_DIR
     cases_dir = base_dir / "cases"
@@ -203,9 +268,13 @@ def main():
     parser.add_argument("--api-key", default=os.environ.get("REPAIR_API_KEY"), help="API key for X-API-Key header (or set REPAIR_API_KEY env var)")
     parser.add_argument("--filter", help="Only run cases matching this string")
     parser.add_argument("--validation", action="store_true", help="Run validation set instead of test set")
+    parser.add_argument("--external", action="store_true", help="Run external test cases (deterministic only, no server needed)")
     args = parser.parse_args()
 
-    run_benchmark(args.url, args.api_key, args.filter, args.validation)
+    if args.external:
+        run_external_benchmark()
+    else:
+        run_benchmark(args.url, args.api_key, args.filter, args.validation)
 
 
 if __name__ == "__main__":
