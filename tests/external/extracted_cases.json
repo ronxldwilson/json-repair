@@ -1,12 +1,247 @@
 [
   {
-    "input": "[",
+    "input": "abc",
+    "expected": "\"abc\"",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "hello   world",
+    "expected": "\"hello   world\"",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{a:2}",
+    "expected": "{\"a\":2}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{a: 2}",
+    "expected": "{\"a\": 2}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{2: 2}",
+    "expected": "{\"2\": 2}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{true: 2}",
+    "expected": "{\"true\": 2}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\n  a: 2\n}",
+    "expected": "{\n  \"a\": 2\n}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[a,b]",
+    "expected": "[\"a\",\"b\"]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[\na,\nb\n]",
+    "expected": "[\n\"a\",\n\"b\"\n]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "\"abc",
+    "expected": "\"abc\"",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "'abc",
+    "expected": "\"abc\"",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{'a':2}",
+    "expected": "{\"a\":2}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{'a':'foo'}",
+    "expected": "{\"a\":\"foo\"}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"a\":\\'foo\\'}",
+    "expected": "{\"a\":\"foo\"}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{a:\\'foo\\',b:\\'bar\\'}",
+    "expected": "{\"a\":\"foo\",\"b\":\"bar\"}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{'a':'b'}",
+    "expected": "{\"a\":\"b\"}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"a\":}",
+    "expected": "{\"a\":null}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"a\":,\"b\":2}",
+    "expected": "{\"a\":null,\"b\":2}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"a\":",
+    "expected": "{\"a\":null}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"a\":undefined}",
+    "expected": "{\"a\":null}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[undefined]",
+    "expected": "[null]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "undefined",
+    "expected": "null",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "/* foo */ {}",
+    "expected": " {}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{} /* foo */ ",
+    "expected": "{}  ",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{} /* foo ",
+    "expected": "{} ",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "\n/* foo */\n{}",
+    "expected": "\n\n{}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"a\":\"foo\",/*hello*/\"b\":\"bar\"}",
+    "expected": "{\"a\":\"foo\",\"b\":\"bar\"}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"flag\":/*boolean*/true}",
+    "expected": "{\"flag\":true}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{} // comment",
+    "expected": "{} ",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\n\"a\":\"foo\",//hello\n\"b\":\"bar\"\n}",
+    "expected": "{\n\"a\":\"foo\",\n\"b\":\"bar\"\n}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "callback_123({});",
+    "expected": "{}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "callback_123([]);",
     "expected": "[]",
     "source": "josdejong/jsonrepair"
   },
   {
-    "input": "{",
+    "input": "callback_123(2);",
+    "expected": "2",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "callback_123(\"foo\");",
+    "expected": "\"foo\"",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "callback_123(null);",
+    "expected": "null",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "callback_123(true);",
+    "expected": "true",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "callback_123(false);",
+    "expected": "false",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "callback({})",
     "expected": "{}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "/* foo bar */ callback_123 ({})",
+    "expected": " {}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "/* foo bar */\ncallback_123({})",
+    "expected": "\n{}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "/* foo bar */ callback_123 (  {}  )",
+    "expected": "   {}  ",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "  /* foo bar */   callback_123({});  ",
+    "expected": "     {}  ",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "\n/* foo\nbar */\ncallback_123 ({});\n\n",
+    "expected": "\n\n{}\n\n",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "```\n{\"a\":\"b\"}\n```",
+    "expected": "\n{\"a\":\"b\"}\n",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "```json\n{\"a\":\"b\"}\n```",
+    "expected": "\n{\"a\":\"b\"}\n",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "```\n{\"a\":\"b\"}\n",
+    "expected": "\n{\"a\":\"b\"}\n",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "\n{\"a\":\"b\"}\n```",
+    "expected": "\n{\"a\":\"b\"}\n",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "```{\"a\":\"b\"}```",
+    "expected": "{\"a\":\"b\"}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "```\n[1,2,3]\n```",
+    "expected": "\n[1,2,3]\n",
     "source": "josdejong/jsonrepair"
   },
   {
@@ -22,6 +257,11 @@
   {
     "input": "[1,2,3,/*comment1*/.../*comment2*/]",
     "expected": "[1,2,3]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"array\":[1,2,3,...]}",
+    "expected": "{\"array\":[1,2,3]}",
     "source": "josdejong/jsonrepair"
   },
   {
@@ -50,6 +290,31 @@
     "source": "josdejong/jsonrepair"
   },
   {
+    "input": "{\"a\":2,\"b\":3,...}",
+    "expected": "{\"a\":2,\"b\":3}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"a\":2,\"b\":3,/*comment1*/.../*comment2*/}",
+    "expected": "{\"a\":2,\"b\":3}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"a\":2,\"b\":3, ... }",
+    "expected": "{\"a\":2,\"b\":3  }",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"nested\":{\"a\":2,\"b\":3, ... }}",
+    "expected": "{\"nested\":{\"a\":2,\"b\":3  }}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"a\":2,\"b\":3,...,\"z\":26}",
+    "expected": "{\"a\":2,\"b\":3,\"z\":26}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
     "input": "{...}",
     "expected": "{}",
     "source": "josdejong/jsonrepair"
@@ -57,81 +322,6 @@
   {
     "input": "{ ... }",
     "expected": "{  }",
-    "source": "josdejong/jsonrepair"
-  },
-  {
-    "input": "[undefined]",
-    "expected": "[null]",
-    "source": "josdejong/jsonrepair"
-  },
-  {
-    "input": "/* foo */ {}",
-    "expected": " {}",
-    "source": "josdejong/jsonrepair"
-  },
-  {
-    "input": "{} /* foo */ ",
-    "expected": "{}  ",
-    "source": "josdejong/jsonrepair"
-  },
-  {
-    "input": "{} /* foo ",
-    "expected": "{} ",
-    "source": "josdejong/jsonrepair"
-  },
-  {
-    "input": "\\n/* foo */\\n{}",
-    "expected": "\\n\\n{}",
-    "source": "josdejong/jsonrepair"
-  },
-  {
-    "input": "{} // comment",
-    "expected": "{} ",
-    "source": "josdejong/jsonrepair"
-  },
-  {
-    "input": "callback_123({});",
-    "expected": "{}",
-    "source": "josdejong/jsonrepair"
-  },
-  {
-    "input": "callback_123([]);",
-    "expected": "[]",
-    "source": "josdejong/jsonrepair"
-  },
-  {
-    "input": "callback({}",
-    "expected": "{}",
-    "source": "josdejong/jsonrepair"
-  },
-  {
-    "input": "/* foo bar */ callback_123 ({})",
-    "expected": " {}",
-    "source": "josdejong/jsonrepair"
-  },
-  {
-    "input": "/* foo bar */\\ncallback_123({})",
-    "expected": "\\n{}",
-    "source": "josdejong/jsonrepair"
-  },
-  {
-    "input": "/* foo bar */ callback_123 (  {}  )",
-    "expected": "   {}  ",
-    "source": "josdejong/jsonrepair"
-  },
-  {
-    "input": "  /* foo bar */   callback_123({});  ",
-    "expected": "     {}  ",
-    "source": "josdejong/jsonrepair"
-  },
-  {
-    "input": "\\n/* foo\\nbar */\\ncallback_123 ({});\\n\\n",
-    "expected": "\\n\\n{}\\n\\n",
-    "source": "josdejong/jsonrepair"
-  },
-  {
-    "input": "```\\n[1,2,3]\\n```",
-    "expected": "\\n[1,2,3]\\n",
     "source": "josdejong/jsonrepair"
   },
   {
@@ -155,18 +345,33 @@
     "source": "josdejong/jsonrepair"
   },
   {
+    "input": "{,\"message\": \"hi\"}",
+    "expected": "{\"message\": \"hi\"}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{ ,\"message\": \"hi\"}",
+    "expected": "{ \"message\": \"hi\"}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{, \"message\": \"hi\"}",
+    "expected": "{ \"message\": \"hi\"}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
     "input": "[1,2,3,]",
     "expected": "[1,2,3]",
     "source": "josdejong/jsonrepair"
   },
   {
-    "input": "[1,2,3,\\n]",
-    "expected": "[1,2,3\\n]",
+    "input": "[1,2,3,\n]",
+    "expected": "[1,2,3\n]",
     "source": "josdejong/jsonrepair"
   },
   {
-    "input": "[1,2,3,  \\n  ]",
-    "expected": "[1,2,3  \\n  ]",
+    "input": "[1,2,3,  \n  ]",
+    "expected": "[1,2,3  \n  ]",
     "source": "josdejong/jsonrepair"
   },
   {
@@ -175,8 +380,33 @@
     "source": "josdejong/jsonrepair"
   },
   {
+    "input": "{\"array\":[1,2,3,]}",
+    "expected": "{\"array\":[1,2,3]}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"a\":2,}",
+    "expected": "{\"a\":2}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"a\":2  ,  }",
+    "expected": "{\"a\":2    }",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"a\":2  , \n }",
+    "expected": "{\"a\":2   \n }",
+    "source": "josdejong/jsonrepair"
+  },
+  {
     "input": "{},",
     "expected": "{}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"a\":2},",
+    "expected": "{\"a\":2}",
     "source": "josdejong/jsonrepair"
   },
   {
@@ -185,8 +415,58 @@
     "source": "josdejong/jsonrepair"
   },
   {
-    "input": "{}}",
+    "input": "{",
     "expected": "{}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"a\":2",
+    "expected": "{\"a\":2}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"a\":2,",
+    "expected": "{\"a\":2}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"a\":{\"b\":2}",
+    "expected": "{\"a\":{\"b\":2}}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[{\"b\":2]",
+    "expected": "[{\"b\":2}]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[{\"i\":1{\"i\":2}]",
+    "expected": "[{\"i\":1},{\"i\":2}]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[{\"i\":1,{\"i\":2}]",
+    "expected": "[{\"i\":1},{\"i\":2}]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"a\": 1}}",
+    "expected": "{\"a\": 1}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"a\": 1}}]}}",
+    "expected": "{\"a\": 1}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"a\":2]",
+    "expected": "{\"a\":2}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"a\":2,]",
+    "expected": "{\"a\":2}",
     "source": "josdejong/jsonrepair"
   },
   {
@@ -205,6 +485,11 @@
     "source": "josdejong/jsonrepair"
   },
   {
+    "input": "[",
+    "expected": "[]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
     "input": "[1,2,3",
     "expected": "[1,2,3]",
     "source": "josdejong/jsonrepair"
@@ -217,6 +502,71 @@
   {
     "input": "[[1,2,3,",
     "expected": "[[1,2,3]]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "NumberLong(\"2\")",
+    "expected": "\"2\"",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"_id\":ObjectId(\"123\")}",
+    "expected": "{\"_id\":\"123\"}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "True",
+    "expected": "true",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "False",
+    "expected": "false",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "None",
+    "expected": "null",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "2.",
+    "expected": "2.0",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "2e",
+    "expected": "2e0",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "2e+",
+    "expected": "2e+0",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "2e-",
+    "expected": "2e-0",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"a\":2.",
+    "expected": "{\"a\":2.0}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"a\":2e",
+    "expected": "{\"a\":2e0}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"a\":2e-",
+    "expected": "{\"a\":2e-0}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"a\":-",
+    "expected": "{\"a\":-0}",
     "source": "josdejong/jsonrepair"
   },
   {
@@ -235,113 +585,368 @@
     "source": "josdejong/jsonrepair"
   },
   {
-    "input": "[]{}",
+    "input": "{\"a\" \"b\"}",
+    "expected": "{\"a\": \"b\"}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"a\" 2}",
+    "expected": "{\"a\": 2}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"a\" true}",
+    "expected": "{\"a\": true}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"a\" false}",
+    "expected": "{\"a\": false}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"a\" null}",
+    "expected": "{\"a\": null}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "\"hello\" + \" world\"",
+    "expected": "\"hello world\"",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "\"a\"+\"b\"+\"c\"",
+    "expected": "\"abc\"",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"array\": [{}{}]}",
+    "expected": "{\"array\": [{},{}]}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"array\": [{} {}]}",
+    "expected": "{\"array\": [{},{}]}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"a\":2\n\"b\":3\n}",
+    "expected": "{\"a\":2,\n\"b\":3\n}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "0789",
+    "expected": "\"0789\"",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "000789",
+    "expected": "\"000789\"",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "001.2",
+    "expected": "\"001.2\"",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "002e3",
+    "expected": "\"002e3\"",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[0789]",
+    "expected": "[\"0789\"]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{value:0789}",
+    "expected": "{\"value\":\"0789\"}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "\"foo",
+    "expected": "\"foo\"",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[\"foo",
+    "expected": "[\"foo\"]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[\"foo\"",
+    "expected": "[\"foo\"]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[\"foo\",",
+    "expected": "[\"foo\"]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"foo\":\"bar\"",
+    "expected": "{\"foo\":\"bar\"}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"foo\":\"bar",
+    "expected": "{\"foo\":\"bar\"}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"foo\":",
+    "expected": "{\"foo\":null}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"foo\"",
+    "expected": "{\"foo\":null}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"foo",
+    "expected": "{\"foo\":null}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"text\":\"Hello Sergey,I hop",
+    "expected": "{\"text\":\"Hello Sergey,I hop\"}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "abc\"",
+    "expected": "\"abc\"",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[a\",\"b\"]",
+    "expected": "[\"a\",\"b\"]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{a\":\"foo\",\"b\":\"bar\"}",
+    "expected": "{\"a\":\"foo\",\"b\":\"bar\"}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"a\":foo\",\"b\":\"bar\"}",
+    "expected": "{\"a\":\"foo\",\"b\":\"bar\"}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "\"12:20",
+    "expected": "\"12:20\"",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"time\":\"12:20}",
+    "expected": "{\"time\":\"12:20\"}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "\"She said:",
+    "expected": "\"She said:\"",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"text\": \"She said:",
+    "expected": "{\"text\": \"She said:\"}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"a\":\"b}",
+    "expected": "{\"a\":\"b\"}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"a\":\"b,\"c\":\"d\"}",
+    "expected": "{\"a\":\"b\",\"c\":\"d\"}",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "[\"hello, world]",
+    "expected": "[\"hello\", \"world\"]",
+    "source": "josdejong/jsonrepair"
+  },
+  {
+    "input": "{\"key\": \"\"",
+    "expected": "{\"key\": \"\"}",
+    "source": "mangiucugna/json_repair"
+  },
+  {
+    "input": "[]{}\"",
     "expected": "[]",
     "source": "mangiucugna/json_repair"
   },
   {
-    "input": "{\"name\": \"John\", \"age\": 30, \"city\": \"New York\"}",
-    "expected": "{",
-    "source": "mangiucugna/json_repair"
-  },
-  {
-    "input": "{\"employees\":[\"John\", \"Anna\", \"Peter\"]} ",
-    "expected": "{",
-    "source": "mangiucugna/json_repair"
-  },
-  {
-    "input": "{\"key\": \"value:value\"}",
-    "expected": "{",
-    "source": "mangiucugna/json_repair"
-  },
-  {
-    "input": "{\"text\": \"The quick brown fox,\"}",
-    "expected": "{",
-    "source": "mangiucugna/json_repair"
-  },
-  {
-    "input": "{\"text\": \"The quick brown fox won\\'t jump\"}",
-    "expected": "{",
-    "source": "mangiucugna/json_repair"
-  },
-  {
-    "input": "{\"key\": \"\"",
-    "expected": "{",
-    "source": "mangiucugna/json_repair"
-  },
-  {
-    "input": "{\"key1\": {\"key2\": [1, 2, 3]}}",
-    "expected": "{",
-    "source": "mangiucugna/json_repair"
-  },
-  {
-    "input": "{\"key\": 12345678901234567890}",
-    "expected": "{",
-    "source": "mangiucugna/json_repair"
-  },
-  {
-    "input": "{\"key\": \"value\\u263a\"}",
-    "expected": "{",
-    "source": "mangiucugna/json_repair"
-  },
-  {
-    "input": "{\"key\": \"value\\\\nvalue\"}",
-    "expected": "{",
-    "source": "mangiucugna/json_repair"
-  },
-  {
-    "input": "[]{\"key\":\"value\"}",
-    "expected": "{",
-    "source": "mangiucugna/json_repair"
-  },
-  {
     "input": "{\"key\":\"value\"}[1,2,3,True]",
-    "expected": "[{",
-    "source": "mangiucugna/json_repair"
-  },
-  {
-    "input": "lorem ```json {\"key\":\"value\"} ``` ipsum ```json [1,2,3,True] ``` 42",
-    "expected": "[{",
+    "expected": "[{\"key\": \"value\"}, [1, 2, 3, true]]",
     "source": "mangiucugna/json_repair"
   },
   {
     "input": "[{\"key\":\"value\"}][{\"key\":\"value_after\"}]",
-    "expected": "[{",
+    "expected": "[{\"key\": \"value_after\"}]",
     "source": "mangiucugna/json_repair"
   },
   {
-    "input": "{\"key\": true, \"key2\": false, \"key3\": null}",
-    "expected": "{",
+    "input": " , {\"key\": \"value\"}",
+    "expected": "{\"key\": \"value\"}",
     "source": "mangiucugna/json_repair"
   },
   {
     "input": "{\"key\": true, \"key2\": false, \"key3\": }",
-    "expected": "{",
+    "expected": "{\"key\": true, \"key2\": false, \"key3\": \"\"}",
     "source": "mangiucugna/json_repair"
   },
   {
     "input": "{'test_中国人_ascii':'统一码'}",
-    "expected": "{",
+    "expected": "{\"test_中国人_ascii\": \"统一码\"}",
     "source": "mangiucugna/json_repair"
   },
   {
-    "input": "{\"key\": \"val\\\\",
-    "expected": "{",
+    "input": "{\"key\": \"val\\",
+    "expected": "{\"key\": \"val\\\\\"}",
     "source": "mangiucugna/json_repair"
   },
   {
-    "input": "{\"key\": \"val\\\\n",
-    "expected": "{",
+    "input": "{\"key\": \"val\\n",
+    "expected": "{\"key\": \"val\"}",
     "source": "mangiucugna/json_repair"
   },
   {
-    "input": "{\"key\": \"val\\\\n123,`key2:value2",
-    "expected": "{",
+    "input": "{\"key\": \"val\\n123,`key2:value2",
+    "expected": "{\"key\": \"val\\n123\", \"key2\": \"value2\"}",
     "source": "mangiucugna/json_repair"
   },
   {
-    "input": "{\"key\": \"val\\\\n123,`key2:value2`\"}",
-    "expected": "{",
+    "input": "{\"key\": \"value}",
+    "expected": "{\"key\": \"value\"}",
     "source": "mangiucugna/json_repair"
+  },
+  {
+    "input": "{\"employees\":[\"John\", \"Anna\", \"Peter\"]} ",
+    "expected": "{\"employees\":[\"John\", \"Anna\", \"Peter\"]}",
+    "source": "mangiucugna/json_repair"
+  },
+  {
+    "input": "{\"text\": \"The quick brown fox won\\'t jump\"}",
+    "expected": "{\"text\": \"The quick brown fox won't jump\"}",
+    "source": "mangiucugna/json_repair"
+  },
+  {
+    "input": "{test: 5}",
+    "expected": "{\"test\": 5}",
+    "source": "RyanMarcus/dirty-json"
+  },
+  {
+    "input": "{'test': 5}",
+    "expected": "{\"test\": 5}",
+    "source": "RyanMarcus/dirty-json"
+  },
+  {
+    "input": "{'test': '5'}",
+    "expected": "{\"test\": \"5\"}",
+    "source": "RyanMarcus/dirty-json"
+  },
+  {
+    "input": "[\"some \"quoted\" text\"]",
+    "expected": "[\"some \\\"quoted\\\" text\"]",
+    "source": "RyanMarcus/dirty-json"
+  },
+  {
+    "input": "[3, \"some \"quoted\" text\", 2]",
+    "expected": "[3, \"some \\\"quoted\\\" text\", 2]",
+    "source": "RyanMarcus/dirty-json"
+  },
+  {
+    "input": "{\"test\": \"some \"quoted\" text\"}",
+    "expected": "{\"test\": \"some \\\"quoted\\\" text\"}",
+    "source": "RyanMarcus/dirty-json"
+  },
+  {
+    "input": "{\"test0\": false, \"test\": \"some \"quoted\" text\", \"test1\": 5}",
+    "expected": "{\"test0\": false, \"test\": \"some \\\"quoted\\\" text\", \"test1\": 5}",
+    "source": "RyanMarcus/dirty-json"
+  },
+  {
+    "input": "{\"this\": that}",
+    "expected": "{\"this\": \"that\"}",
+    "source": "RyanMarcus/dirty-json"
+  },
+  {
+    "input": "{\"this\": that, \"another\": \"maybe\"}",
+    "expected": "{\"this\": \"that\", \"another\": \"maybe\"}",
+    "source": "RyanMarcus/dirty-json"
+  },
+  {
+    "input": "[this, that]",
+    "expected": "[\"this\", \"that\"]",
+    "source": "RyanMarcus/dirty-json"
+  },
+  {
+    "input": "[this, that,]",
+    "expected": "[\"this\", \"that\"]",
+    "source": "RyanMarcus/dirty-json"
+  },
+  {
+    "input": "[a, b]",
+    "expected": "[\"a\", \"b\"]",
+    "source": "RyanMarcus/dirty-json"
+  },
+  {
+    "input": "[a,b,c,]",
+    "expected": "[\"a\", \"b\", \"c\"]",
+    "source": "RyanMarcus/dirty-json"
+  },
+  {
+    "input": "{\"this\": h\"that\"}",
+    "expected": "{\"this\": \"hthat\"}",
+    "source": "RyanMarcus/dirty-json"
+  },
+  {
+    "input": "{ \"test\": 5. }",
+    "expected": "{\"test\": 5.0}",
+    "source": "RyanMarcus/dirty-json"
+  },
+  {
+    "input": "{ \"test\": .5 }",
+    "expected": "{\"test\": 0.5}",
+    "source": "RyanMarcus/dirty-json"
+  },
+  {
+    "input": "{\"test\": [1,,,,,,,,,2]}",
+    "expected": "{\"test\": [1, 2]}",
+    "source": "RyanMarcus/dirty-json"
+  },
+  {
+    "input": "{\"test\": cool-cat}",
+    "expected": "{\"test\": \"cool-cat\"}",
+    "source": "RyanMarcus/dirty-json"
+  },
+  {
+    "input": "{\"key\": }",
+    "expected": "{\"key\": null}",
+    "source": "RyanMarcus/dirty-json"
+  },
+  {
+    "input": "{\"key1\": \"test\", \"key\": , \"key2\": \"test\"}",
+    "expected": "{\"key1\": \"test\", \"key\": null, \"key2\": \"test\"}",
+    "source": "RyanMarcus/dirty-json"
+  },
+  {
+    "input": "{\"claim\": \"\"this is a test\" of whitespace\"}",
+    "expected": "{\"claim\": \"\\\"this is a test\\\" of whitespace\"}",
+    "source": "RyanMarcus/dirty-json"
+  },
+  {
+    "input": "{type: String, value: 'something'}",
+    "expected": "{\"type\": \"String\", \"value\": \"something\"}",
+    "source": "RyanMarcus/dirty-json"
+  },
+  {
+    "input": " { \"key\": \"test\"",
+    "expected": " { \"key\": \"test\" } ",
+    "source": "RyanMarcus/dirty-json"
   }
 ]

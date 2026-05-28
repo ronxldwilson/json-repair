@@ -169,8 +169,44 @@ def _fix_multiline_strings(t: str) -> str:
     return '\n'.join(result)
 
 
+def _quote_leading_zero_numbers(t: str) -> str:
+    pat = re.compile(r'(?<![.\d\w"])0(\d[\d.eE+\-]*)')
+    result = []
+    in_str = False
+    i = 0
+    while i < len(t):
+        ch = t[i]
+        if in_str:
+            result.append(ch)
+            if ch == '\\' and i + 1 < len(t):
+                result.append(t[i + 1])
+                i += 2
+                continue
+            if ch == '"':
+                in_str = False
+            i += 1
+            continue
+        if ch == '"':
+            in_str = True
+            result.append(ch)
+            i += 1
+            continue
+        m = pat.match(t, i)
+        if m and i == m.start():
+            full = m.group(0)
+            result.append('"')
+            result.append(full)
+            result.append('"')
+            i = m.end()
+            continue
+        result.append(ch)
+        i += 1
+    return ''.join(result)
+
+
 def _fix_numbers(t: str) -> str:
     t = re.sub(r'(?<![.\d])\.([\d])', r'0.\1', t)
+    t = re.sub(r'(\d)\.(?=[,\s\]\}\)]|$)', r'\g<1>.0', t)
     while True:
         new_t = re.sub(r'(\d)_(\d)', r'\1\2', t)
         if new_t == t:
@@ -178,12 +214,93 @@ def _fix_numbers(t: str) -> str:
         t = new_t
     t = re.sub(r'\b0x([0-9a-fA-F]+)\b', lambda m: str(int(m.group(1), 16)), t)
     t = re.sub(r'(?<=:\s)0+(\d+)(?=[,\s}\]\n])', r'\1', t)
+    t = _quote_leading_zero_numbers(t)
     t = re.sub(r'-?Infinity\b', 'null', t)
     t = re.sub(r'\bNaN\b', 'null', t)
     return t
 
 
+def _strip_ellipsis(t: str) -> str:
+    result = []
+    in_str = False
+    i = 0
+    while i < len(t):
+        ch = t[i]
+        if in_str:
+            result.append(ch)
+            if ch == '\\' and i + 1 < len(t):
+                result.append(t[i + 1])
+                i += 2
+                continue
+            if ch == '"':
+                in_str = False
+        elif ch == '"':
+            result.append(ch)
+            in_str = True
+        elif ch == '.' and i + 2 < len(t) and t[i + 1] == '.' and t[i + 2] == '.':
+            i += 3
+            continue
+        else:
+            result.append(ch)
+        i += 1
+    return ''.join(result)
+
+
+def _close_truncated_strings(t: str) -> str:
+    in_str = False
+    i = 0
+    while i < len(t):
+        ch = t[i]
+        if not in_str:
+            if ch == '"':
+                in_str = True
+        else:
+            if ch == '\\' and i + 1 < len(t):
+                i += 2
+                continue
+            if ch == '"':
+                in_str = False
+        i += 1
+    if in_str:
+        j = len(t) - 1
+        trailing_bs = 0
+        while j >= 0 and t[j] == '\\':
+            trailing_bs += 1
+            j -= 1
+        if trailing_bs % 2 == 1:
+            t = t[:-1]
+        t = t + '"'
+    return t
+
+
+def _strip_bare_escapes(t: str) -> str:
+    result = []
+    in_str = False
+    i = 0
+    while i < len(t):
+        ch = t[i]
+        if in_str:
+            result.append(ch)
+            if ch == '\\' and i + 1 < len(t):
+                result.append(t[i + 1])
+                i += 2
+                continue
+            if ch == '"':
+                in_str = False
+        elif ch == '"':
+            result.append(ch)
+            in_str = True
+        elif ch == '\\' and i + 1 < len(t):
+            i += 2
+            continue
+        else:
+            result.append(ch)
+        i += 1
+    return ''.join(result)
+
+
 def _auto_close_brackets(t: str) -> str:
+    result = []
     stack = []
     in_str = False
     i = 0
@@ -191,21 +308,32 @@ def _auto_close_brackets(t: str) -> str:
         ch = t[i]
         if in_str:
             if ch == '\\' and i + 1 < len(t):
+                result.append(ch)
+                result.append(t[i + 1])
                 i += 2
                 continue
             if ch == '"':
                 in_str = False
+            result.append(ch)
         elif ch == '"':
             in_str = True
+            result.append(ch)
         elif ch == '{':
             stack.append('}')
+            result.append(ch)
         elif ch == '[':
             stack.append(']')
+            result.append(ch)
         elif ch in '}]':
-            if stack and stack[-1] == ch:
-                stack.pop()
+            if stack:
+                expected = stack.pop()
+                result.append(expected)
+            else:
+                result.append(ch)
+        else:
+            result.append(ch)
         i += 1
-    return t + ''.join(reversed(stack))
+    return ''.join(result) + ''.join(reversed(stack))
 
 
 def deterministic_repair(text: str) -> str:
@@ -214,6 +342,10 @@ def deterministic_repair(text: str) -> str:
 
     t = re.sub(r'^```(?:json)?\s*\n?', '', t)
     t = re.sub(r'\n?```\s*$', '', t)
+
+    m = re.match(r'^[a-zA-Z_]\w*\s*\((.*)\)\s*;?\s*$', t, re.DOTALL)
+    if m and '{' not in t and '[' not in t:
+        t = m.group(1).strip()
 
     first_brace = min(
         (t.find('{') if '{' in t else len(t)),
@@ -254,6 +386,9 @@ def deterministic_repair(text: str) -> str:
     t = re.sub(r'\bTrue\b', 'true', t)
     t = re.sub(r'\bFalse\b', 'false', t)
     t = re.sub(r'\bNone\b', 'null', t)
+    t = re.sub(r'\bundefined\b', 'null', t)
+
+    t = re.sub(r'\b[A-Z][a-zA-Z]*\("([^"]*)"\)', r'"\1"', t)
 
     t = _fix_multiline_strings(t)
     t = _fix_closing_quotes(t)
@@ -263,16 +398,23 @@ def deterministic_repair(text: str) -> str:
 
     t = _strip_comments(t)
 
+    if '...' in t:
+        t = _strip_ellipsis(t)
+        t = re.sub(r',\s*,+', ',', t)
+
     t = re.sub(r'(?<=[{,\n])\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*:', r' "\1":', t)
 
     t = re.sub(r'^(\s*"(?:[^"\\]|\\.)*")\s+(")', r'\1: \2', t, flags=re.MULTILINE)
     t = re.sub(r'^(\s*"(?:[^"\\]|\\.)*")\s+(\d)', r'\1: \2', t, flags=re.MULTILINE)
     t = re.sub(r'^(\s*"(?:[^"\\]|\\.)*")\s+(true|false|null)', r'\1: \2', t, flags=re.MULTILINE)
+    t = re.sub(r'(?<=[{,])\s*("(?:[^"\\]|\\.)*")\s+(")', r' \1: \2', t)
+    t = re.sub(r'(?<=[{,])\s*("(?:[^"\\]|\\.)*")\s+(\d)', r' \1: \2', t)
+    t = re.sub(r'(?<=[{,])\s*("(?:[^"\\]|\\.)*")\s+(true|false|null)', r' \1: \2', t)
     t = re.sub(r'(")\s+(\{)', r'\1: \2', t)
     t = re.sub(r'(")\s+(\[)', r'\1: \2', t)
 
-    for _ in range(3):
-        t = re.sub(r',(\s*[}\]])', r'\1', t)
+    t = re.sub(r'(:\s*)([\}\]])', r'\1null\2', t)
+    t = re.sub(r'(:\s*)(,)', r'\1null\2', t)
 
     t = re.sub(r'(")\s*\n(\s*")', r'\1,\n\2', t)
     t = re.sub(r'(\d)\s*\n(\s*")', r'\1,\n\2', t)
@@ -290,10 +432,24 @@ def deterministic_repair(text: str) -> str:
     t = re.sub(r'(\d)\s+(")', r'\1, \2', t)
     t = re.sub(r'(true|false|null)\s+(")', r'\1, \2', t)
 
+    t = re.sub(r'(\d[eE][+\-]?)(?=[,\s\]\}]|$)', r'\g<1>0', t)
+    t = re.sub(r'-(?=[,\s\]\}]|$)', '-0', t)
+
     t = _fix_numbers(t)
     t = _escape_control_chars(t)
     t = re.sub(r'(?<!\\)\\(?!["\\/bfnrtu])', r'\\\\', t)
+
+    t = _strip_bare_escapes(t)
+    t = _close_truncated_strings(t)
     t = _auto_close_brackets(t)
+
+    t = re.sub(r'(:\s*)([\}\]])', r'\1null\2', t)
+    t = re.sub(r'^(\s*\{\s*)("(?:[^"\\]|\\.)*")(\s*\}\s*)$', r'\1\2:null\3', t)
+
+    for _ in range(3):
+        t = re.sub(r',(\s*[}\]])', r'\1', t)
+
+    t = re.sub(r'([\[{])(\s*),(\s*)', r'\1\2\3', t)
 
     return t
 
