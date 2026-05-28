@@ -1,0 +1,9 @@
+services:
+  json-repair:
+    build: .
+    platform: linux/amd64
+    ports:
+      - "8776:8776"
+    volumes:
+      - ./data:/data
+    entrypoint: ["python3", "scripts/fix_json.py"]

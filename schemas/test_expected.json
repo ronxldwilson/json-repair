@@ -1,0 +1,23 @@
+{
+  "type": "object",
+  "properties": {
+    "name": { "type": "string" },
+    "age": { "type": "integer" },
+    "email": { "type": "string" },
+    "address": {
+      "type": "object",
+      "properties": {
+        "street": { "type": "string" },
+        "city": { "type": "string" },
+        "zip": { "type": "integer" }
+      },
+      "required": ["street", "city", "zip"]
+    },
+    "hobbies": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "active": { "type": "boolean" }
+  },
+  "required": ["name", "age", "email", "address", "hobbies", "active"]
+}
