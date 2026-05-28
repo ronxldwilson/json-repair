@@ -1,6 +1,6 @@
 FROM python:3.12-slim
 
-RUN pip install --no-cache-dir fastapi uvicorn pydantic
+RUN pip install --no-cache-dir fastapi uvicorn pydantic jsonschema
 
 WORKDIR /app
 

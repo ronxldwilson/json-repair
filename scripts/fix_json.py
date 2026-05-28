@@ -5,6 +5,7 @@ import argparse
 import importlib.util
 import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -21,13 +22,211 @@ HEALTH_URL = f"{SERVER_URL}/health"
 COMPLETIONS_URL = f"{SERVER_URL}/v1/chat/completions"
 COMPLETION_URL = f"{SERVER_URL}/completion"
 
-SYSTEM_PROMPT = (
-    "You are a JSON repair tool. You receive broken JSON and return the corrected version. "
-    "Preserve the original structure, keys, and values exactly. Only fix syntax errors "
-    "(missing quotes, missing commas, trailing commas, wrong boolean literals, etc). "
-    "Do not add, remove, rename, or rearrange any keys. Do not move values between objects. "
-    "Return only the corrected JSON, nothing else."
-)
+SYSTEM_PROMPT = "Fix this JSON. Return only corrected JSON, no explanation."
+
+
+def _replace_single_quotes(t: str) -> str:
+    result = []
+    i = 0
+    in_double = False
+    while i < len(t):
+        ch = t[i]
+        if in_double:
+            result.append(ch)
+            if ch == '\\' and i + 1 < len(t):
+                result.append(t[i + 1])
+                i += 2
+                continue
+            if ch == '"':
+                in_double = False
+        elif ch == '"':
+            result.append(ch)
+            in_double = True
+        elif ch == "'":
+            result.append('"')
+            i += 1
+            while i < len(t):
+                c = t[i]
+                if c == '\\' and i + 1 < len(t):
+                    result.append(c)
+                    result.append(t[i + 1])
+                    i += 2
+                    continue
+                if c == "'":
+                    result.append('"')
+                    i += 1
+                    break
+                if c == '"':
+                    result.append('\\"')
+                else:
+                    result.append(c)
+                i += 1
+            continue
+        else:
+            result.append(ch)
+        i += 1
+    return ''.join(result)
+
+
+def _fix_closing_quotes(t: str) -> str:
+    lines = t.split('\n')
+    fixed = []
+    for line in lines:
+        stripped = line.rstrip()
+        m = re.match(r'^(\s*"[^"]*"\s*:\s*")(.*)$', stripped)
+        if m:
+            val_part = m.group(2)
+            quote_count = len(re.findall(r'(?<!\\)"', val_part))
+            if quote_count % 2 == 0:
+                stripped = stripped + '"'
+        fixed.append(stripped)
+    return '\n'.join(fixed)
+
+
+def _strip_comments(t: str) -> str:
+    result = []
+    i = 0
+    in_string = False
+    while i < len(t):
+        ch = t[i]
+        if in_string:
+            result.append(ch)
+            if ch == '\\' and i + 1 < len(t):
+                result.append(t[i + 1])
+                i += 2
+                continue
+            if ch == '"':
+                in_string = False
+        elif ch == '"':
+            result.append(ch)
+            in_string = True
+        elif ch == '/' and i + 1 < len(t) and t[i + 1] == '/':
+            while i < len(t) and t[i] != '\n':
+                i += 1
+            continue
+        elif ch == '/' and i + 1 < len(t) and t[i + 1] == '*':
+            i += 2
+            while i + 1 < len(t) and not (t[i] == '*' and t[i + 1] == '/'):
+                i += 1
+            i += 2
+            continue
+        else:
+            result.append(ch)
+        i += 1
+    return ''.join(result)
+
+
+def _escape_control_chars(t: str) -> str:
+    result = []
+    in_string = False
+    i = 0
+    while i < len(t):
+        ch = t[i]
+        if not in_string:
+            result.append(ch)
+            if ch == '"':
+                in_string = True
+        else:
+            if ch == '\\' and i + 1 < len(t):
+                result.append(ch)
+                result.append(t[i + 1])
+                i += 2
+                continue
+            if ch == '"':
+                result.append(ch)
+                in_string = False
+            elif ch == '\n':
+                result.append('\\n')
+            elif ch == '\r':
+                result.append('\\r')
+            elif ch == '\t':
+                result.append('\\t')
+            elif ord(ch) < 0x20:
+                result.append(f'\\u{ord(ch):04x}')
+            else:
+                result.append(ch)
+        i += 1
+    return ''.join(result)
+
+
+def deterministic_repair(text: str) -> str:
+    """Fast regex/string-based repair for common JSON errors."""
+    t = text.strip()
+
+    t = re.sub(r'^```(?:json)?\s*\n?', '', t)
+    t = re.sub(r'\n?```\s*$', '', t)
+
+    first_brace = min(
+        (t.find('{') if '{' in t else len(t)),
+        (t.find('[') if '[' in t else len(t)),
+    )
+    if first_brace > 0 and first_brace < len(t):
+        t = t[first_brace:]
+
+    depth = 0
+    end_pos = 0
+    in_str = False
+    for i, ch in enumerate(t):
+        if in_str:
+            if ch == '\\' and i + 1 < len(t):
+                continue
+            if ch == '"':
+                in_str = False
+            continue
+        if ch == '"':
+            in_str = True
+        elif ch in '{[':
+            depth += 1
+        elif ch in '}]':
+            depth -= 1
+            if depth == 0:
+                end_pos = i + 1
+                break
+    if end_pos > 0 and end_pos < len(t):
+        t = t[:end_pos]
+
+    t = t.strip()
+    if t and t[0] != '{' and t[0] != '[':
+        if '"' in t and ':' in t:
+            t = '{' + t + '}'
+
+    t = re.sub(r',\s*,+', ',', t)
+
+    t = re.sub(r'\bTrue\b', 'true', t)
+    t = re.sub(r'\bFalse\b', 'false', t)
+    t = re.sub(r'\bNone\b', 'null', t)
+
+    t = _fix_closing_quotes(t)
+
+    if "'" in t:
+        t = _replace_single_quotes(t)
+
+    t = _strip_comments(t)
+
+    t = re.sub(r'(?<=[{,\n])\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*:', r' "\1":', t)
+
+    t = re.sub(r'(")\s+(\{)', r'\1: \2', t)
+    t = re.sub(r'(")\s+(\[)', r'\1: \2', t)
+
+    for _ in range(3):
+        t = re.sub(r',(\s*[}\]])', r'\1', t)
+
+    t = re.sub(r'(")\s*\n(\s*")', r'\1,\n\2', t)
+    t = re.sub(r'(\d)\s*\n(\s*")', r'\1,\n\2', t)
+    t = re.sub(r'(true|false|null)\s*\n(\s*")', r'\1,\n\2', t)
+    t = re.sub(r'(\})\s*\n(\s*\{)', r'\1,\n\2', t)
+    t = re.sub(r'(\])\s*\n(\s*\[)', r'\1,\n\2', t)
+    t = re.sub(r'(\})\s*\n(\s*")', r'\1,\n\2', t)
+    t = re.sub(r'(\])\s*\n(\s*")', r'\1,\n\2', t)
+
+    t = re.sub(r'(")\s+(")', r'\1, \2', t)
+    t = re.sub(r'(\d)\s+(")', r'\1, \2', t)
+    t = re.sub(r'(true|false|null)\s+(")', r'\1, \2', t)
+
+    t = _escape_control_chars(t)
+    t = re.sub(r'(?<!\\)\\(?!["\\/bfnrtu])', r'\\\\', t)
+
+    return t
 
 # GBNF grammar that forces valid strict JSON output
 JSON_GRAMMAR = r'''
@@ -114,7 +313,7 @@ def repair_with_schema(broken_text: str, schema: dict) -> str:
         "model": "local",
         "messages": [
             {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": f"Fix this broken JSON:\n{broken_text}"},
+            {"role": "user", "content": broken_text},
         ],
         "temperature": 0,
         "max_tokens": 4096,
@@ -134,7 +333,7 @@ def repair_with_grammar(broken_text: str) -> str:
     """Use /completion with GBNF grammar for generic JSON constraint."""
     prompt = (
         f"<|im_start|>system\n{SYSTEM_PROMPT}<|im_end|>\n"
-        f"<|im_start|>user\nFix this broken JSON:\n{broken_text}<|im_end|>\n"
+        f"<|im_start|>user\n{broken_text}<|im_end|>\n"
         f"<|im_start|>assistant\n"
     )
     body = {
@@ -150,10 +349,18 @@ def repair_with_grammar(broken_text: str) -> str:
     return result["content"].strip()
 
 
-def repair_json(broken_text: str, schema: dict | None = None) -> str:
+def repair_json(broken_text: str, schema: dict | None = None) -> tuple[str, str]:
+    """Returns (repaired_text, method). Tries deterministic first, LLM fallback."""
+    deterministic_result = deterministic_repair(broken_text)
+    try:
+        json.loads(deterministic_result)
+        return deterministic_result, "deterministic"
+    except json.JSONDecodeError:
+        pass
+
     if schema:
-        return repair_with_schema(broken_text, schema)
-    return repair_with_grammar(broken_text)
+        return repair_with_schema(broken_text, schema), "llm"
+    return repair_with_grammar(broken_text), "llm"
 
 
 def validate_json(text: str, schema: dict | None = None) -> tuple[bool, str]:
@@ -238,7 +445,8 @@ def main():
 
             broken = path.read_text()
             print(f"Repairing {path}...")
-            repaired = repair_json(broken, schema)
+            repaired, method = repair_json(broken, schema)
+            print(f"  Method: {method}")
 
             if args.validate:
                 valid, msg = validate_json(repaired, schema)
