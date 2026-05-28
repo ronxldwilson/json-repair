@@ -1,0 +1,14 @@
+{
+  "name": "Sun Pharmaceutical Industries Limited"
+  "description": "Sun Pharma is the world largest specialty generic pharmaceutical company and India most valuable pharma brand. Headquartered in Mumbai, with 43 manufacturing facilities globally (12 in India). Products span formulations, APIs, and specialty drugs. Key therapy areas: dermatology, ophthalmology, oncology, CNS, cardiology. Revenue FY2024: ₹47,559 crore. Exports to 100+ countries."
+  honest_assessment: "Sun Pharma is essentially in a different league from other Indian pharma companies. Their US specialty business alone generates more revenue than many Indian pharma companies total. As a supplier for API or formulations, they are highly selective. Minimum API orders typically 100kg for standard molecules. Pricing competitive with Divi's and Aurobindo for volume buyers. Their Halol facility has cleaned up post-2015 FDA issues. Best for large pharma buyers needing WHO-prequalified APIs."
+  business_types: ["Manufacturer", "Exporter", "API Supplier",]
+  key_products: ["Generic Formulations", "Specialty Drugs (Ilumya, Cequa)", "Active Pharmaceutical Ingredients", "OTC Products", "Biosimilars",]
+  years_in_business: 41
+  certifications: ["WHO GMP", "US FDA Approved", "EU GMP", "TGA Australia", "PMDA Japan", "ISO 14001:2015",]
+  website: "https://www.sunpharma.com"
+  address: "Sun House, CTS No. 201 B/1, Western Express Highway, Goregaon East, Mumbai - 400063, India"
+  fit_score: 67.0
+  llm_phones: ["+91-22-4324-4324",]
+  llm_landlines: ["+91-22-2685-8888",]
+  llm_emails: ["corpcomm@sunpharma.com", "api.sales@sunpharma.com",]

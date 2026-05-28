@@ -1,0 +1,25 @@
+// Packaging supplier assessment
+/* Generated: 2024-12-02 | Query: corrugated box manufacturer India */
+{
+  "name": "Smurfit Kappa India (formerly SCA Packaging India)"
+  description: "Smurfit Kappa India is one of the leading corrugated packaging manufacturers in India, part of the global Smurfit Kappa Group (Ireland). Operations span 6 manufacturing plants across India - Pune, Chennai, Hyderabad, Delhi NCR, Ahmedabad, and Kolkata. Annual capacity: 1.8 lakh tonnes of corrugated packaging."
+  "honest_assessment": "Strong operational capability for large FMCG accounts (Hindustan Unilever, P&G, Nestle are confirmed clients). Their structural design team is the best among Indian corrugated manufacturers - they saved Flipkart 12% on packaging costs through right-sizing. However, they are expensive - 15-25% premium over local manufacturers. Not suitable for small orders under ₹5 lakh. Lead times for custom die-cut designs are 3-4 weeks. Their Kolkata and Hyderabad plants have newer equipment than Pune."
+  business_types: ["Manufacturer", "Exporter", "Custom Packaging"] // missing trailing comma
+  key_products: [
+    "3-ply Corrugated Boxes",
+    "5-ply Heavy Duty Cartons",
+    "Die-Cut Packaging", // inline comment
+    "E-commerce Mailers",
+    "Retail Ready Packaging",
+    "Shelf Ready Trays",
+    "Industrial Bulk Containers",
+  ]
+  years_in_business: 45
+  certifications: ["ISO 9001:2015", "ISO 14001:2015", "FSC Certified", "BRC/IoP Grade A", "SEDEX Approved",]
+  website: "https://www.smurfitkappa.com/in"
+  "address": "Plot B-23, MIDC Ranjangaon, Pune - 412220, Maharashtra, India"
+  fit_score: 78.0
+  llm_phones: ["+91-20-6633-4400", "+91-44-2836-5500",]
+  llm_landlines: ["+91-20-6633-4500",]
+  llm_emails: ["india.sales@smurfitkappa.com", "packaging.solutions@smurfitkappa.com",]
+}

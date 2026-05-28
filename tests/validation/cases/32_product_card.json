@@ -1,0 +1,42 @@
+I found a great match for your solar panel query. Here is the product card:
+
+```json
+{
+  "vendor": "Waaree Energies Limited"
+  "product": "Waaree WS-545 Mono PERC 545W Solar Panel"
+  "specs": {
+    "Cell Type": "Mono PERC 182mm Half-Cut"
+    "Power Output": "545 Wp (STC)"
+    "Efficiency": "21.1%"
+    "Voltage (Vmp)": "41.5V"
+    "Current (Imp)": "13.13A"
+    "Open Circuit Voltage (Voc)": "49.8V"
+    "Short Circuit Current (Isc)": "13.85A"
+    "Dimensions": "2278mm x 1134mm x 35mm"
+    "Weight": "28.5 kg"
+    "Frame": "Anodized Aluminium Alloy"
+    "Glass": "3.2mm Anti-Reflective Tempered"
+    "Connector": "MC4 Compatible"
+    "Junction Box": "IP68 Rated"
+    "Max System Voltage": "1500V DC"
+  }
+  "description": "The Waaree WS-545 is a high-efficiency monocrystalline PERC panel optimized for Indian rooftop and ground-mount solar installations. Half-cut 182mm cells reduce hot-spot risk and improve shade tolerance. ALMM listed - mandatory for all government and DISCOM net-metering projects in India. The 1500V system voltage compatibility makes it suitable for large string inverter configurations, reducing BOS costs by 8-10% compared to older 1000V panels."
+  "price_range": "₹18.50 - ₹20.00 per Wp (₹10,082 - ₹10,900 per panel)"
+  "price_reasoning": "Waaree official channel partner ₹18.50/Wp for 100kW+ orders, IndiaMart range ₹17-₹22/Wp, Amazon Business ₹20.50/Wp single panel. Took official channel price for standard B2B procurement."
+  "price_source_url": "https://www.waaree.com/solar-panels/ws-545"
+  "availability": "Ready Stock (standard variant) - BIS II certified variant 2 week lead"
+  "warranty": "12 year product warranty, 30 year linear performance warranty (84.8% at year 30)"
+  "moq": "1 pallet (31 panels = 16.9 kW)"
+  "delivery": "7-10 business days (ex-Surat factory)"
+  "certifications": ["IEC 61215", "IEC 61730", "BIS IS 14286", "ALMM Listed", "UL 1703", "MCS Certified",]
+  "email": "sales@waaree.com"
+  "phone": "+91-22-6644-4444"
+  "manufacturer_info": "Waaree Energies Limited, founded 1989 and headquartered in Mumbai, is India largest solar panel manufacturer with 12 GW annual production capacity across 4 plants (Surat, Tamilnadu, Chikhli, IndoSolar). Listed on NSE/BSE. Exports to 68 countries."
+  "pros": ["India largest solar manufacturer - 12 GW capacity", "ALMM listed - eligible for all govt subsidy schemes", "Half-cut cell tech - better shade tolerance", "30-year performance warranty with 84.8% guarantee", "MC4 compatible connectors - universal inverter support",]
+  "cons": ["28.5 kg panel weight - needs robust mounting structure", "545W panels need wider rails than 440W standard", "Warranty claims routed through channel partners only", "No bifacial option in this model",]
+  "score_spec_depth": 27
+  "score_brand": 21
+  "matches_query": True
+  "product_image_urls": ["https://www.waaree.com/media/ws545-front.jpg", "https://www.waaree.com/media/ws545-datasheet.jpg",]
+}
+```

@@ -1,0 +1,39 @@
+Here is the product card data you requested for the Esab welding machine:
+
+```json
+{
+  "vendor": "ESAB India Limited",
+  "product": "ESAB Fabricator 252i MIG/MAG Welding Machine",
+  "specs": {
+    "Welding Process": "MIG/MAG (GMAW)",
+    "Input Voltage": "415V 3-Phase 50Hz",
+    "Output Range": "30A - 250A",
+    "Duty Cycle": "60% at 250A",
+    "Wire Diameter": "0.8mm - 1.2mm",
+    "Wire Feed Speed": "1.5 - 18 m/min",
+    "Cooling": "Fan-on-demand",
+    "Protection": "IP23S",
+    "Weight": "28 kg",
+    "Dimensions": "510mm x 250mm x 430mm"
+  }
+  "description": "The ESAB Fabricator 252i is a professional-grade inverter MIG/MAG welder engineered for heavy fabrication shops and automotive body repair. Synergic one-knob control sets wire speed and voltage automatically based on material thickness.
+Suitable for mild steel, stainless steel, and aluminium (with spool gun). Certified for use in offshore environments."
+  "price_range": "₹1,15,000 - ₹1,22,000"
+  "price_reasoning": "ESAB India distributor quote ₹1,15,000 ex-GST (min 1 unit), Amazon Business ₹1,22,500 inclusive GST, Tools World ₹1,18,000. Took distributor price excluding GST as standard B2B reference."
+  "price_source_url": "https://www.esabindia.com/welding-machines/fabricator-252i"
+  "availability": "Limited Stock - 2 week lead time for new units"
+  "warranty": "2 years on inverter module, 1 year consumables"
+  "moq": "1 unit"
+  "delivery": "10-14 business days"
+  "certifications": ["CE Marked", "CCC Certified", "IEC 60974-1", "ISO 9001:2015",]
+  "email": "sales.india@esab.com"
+  "phone": "+91-44-4345-6789"
+  "manufacturer_info": "ESAB India Limited is a wholly owned subsidiary of ESAB Corporation (USA), the world largest welding company founded in Sweden in 1904. Indian operations established 1960. Manufacturing plant at Sriperumbudur, Tamil Nadu."
+  "pros": ["Global brand with 120 years expertise", "Synergic MIG control reduces skill requirement", "60% duty cycle - handles continuous production", "IP23S rated for outdoor/dusty fabrication shops",]
+  "cons": ["3-phase power required - single phase not available in this model", "Service centres limited outside tier-1 cities", "Consumables (tips, liners) are ESAB-specific and pricey",]
+  "score_spec_depth": 26
+  "score_brand": 22
+  "matches_query": True
+  "product_image_urls": ["https://www.esabindia.com/media/fabricator252i-front.jpg", "https://www.esabindia.com/media/fabricator252i-panel.jpg",]
+}
+```

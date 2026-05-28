@@ -1,0 +1,36 @@
+{
+  'vendor': 'Kirloskar Brothers Limited',
+  'product': 'Kirloskar Star-1 Monoblock Centrifugal Pump 1.5HP',
+  'specs': {
+    'Power': '1.5 HP / 1.1 kW'
+    'Discharge': '25mm (1 inch)'
+    'Max Head': '32 metres'
+    'Max Flow': '3,000 LPH'
+    'Phase': 'Single Phase 220V 50Hz'
+    'RPM': '2900'
+    'Impeller': 'Cast Iron'
+    'Shaft Seal': 'Mechanical Seal'
+    'Inlet/Outlet': '25mm x 25mm'
+    'Insulation Class': 'B'
+    'IP Rating': 'IP44'
+    'Body Material': 'Cast Iron IS 210 Gr. FG 200'
+  }
+  'description': 'The Kirloskar Star-1 is the best-selling agricultural and domestic monoblock pump in India with over 3 crore units sold since 1975. Suitable for irrigation, water transfer, and pressure boosting. Energy-efficient design with 70%+ hydraulic efficiency at BEP. Note: Clean water only.'
+  'price_range': '₹4,800 - ₹5,200'
+  'price_reasoning': 'Dealer network price ₹4,800 (trade, min 5 units), Amazon ₹5,100 (single unit, Prime), IndustryBuying ₹4,950 (bulk). Kirloskar official dealer price taken for B2B context.'
+  'price_source_url': 'https://www.kirloskarpumps.com/star-1-monoblock-pump'
+  'availability': 'Ready Stock'
+  'warranty': '12 months from date of purchase'
+  'moq': '1 unit'
+  'delivery': '3-5 business days'
+  'certifications': ['ISI Mark IS 9079', 'ISO 9001:2015', 'BIS Certified', 'CE Marked',]
+  'email': 'pumps@kirloskar.com'
+  'phone': '+91-20-2721-4444'
+  'manufacturer_info': 'Kirloskar Brothers Limited (KBL), incorporated 1888, is India oldest and largest pump manufacturer. Headquartered in Pune, KBL operates 5 manufacturing plants with a combined capacity of 1.5 lakh pumps per month. Exports to 60+ countries.'
+  'pros': ['Market leader - widest service network in India', 'Proven reliability - 3 crore+ units sold', 'Spare parts available at every town', 'ISI certified - mandatory for government tenders', 'Low power consumption at BEP',]
+  'cons': ['Heavier than equivalent Korean/Taiwanese pumps', 'Single-phase only in this model', 'No built-in pressure tank - add separately for boosting',]
+  'score_spec_depth': 24
+  'score_brand': 23
+  'matches_query': True
+  'product_image_urls': ['https://www.kirloskarpumps.com/media/star1-pump-main.jpg', 'https://www.kirloskarpumps.com/media/star1-cutaway.jpg',]
+}

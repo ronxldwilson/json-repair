@@ -1,0 +1,32 @@
+{
+  'name': 'Motherson Sumi Systems Limited (MSSL)',
+  'description': 'Motherson Sumi Systems (now rebranded as Samvardhana Motherson International) is India largest auto components manufacturer and one of the top 20 globally. The company supplies wiring harnesses, plastic components, mirrors, lighting, and EV components to virtually every OEM in India and 41 countries. FY2024 revenue: ₹1,00,000 crore+ (consolidated group). Indian operations span 50+ plants across Noida, Pune, Chennai, Manesar, Hosur, and Sanand.',
+  // honest_assessment - aggregated from 3 buyer interviews + Dun & Bradstreet report
+  'honest_assessment': 'MSSL is the definition of a captive Tier-1 supplier - they were essentially built around Maruti Suzuki and Volkswagen Group requirements, and it shows.
+
+For wiring harness supply: MSSL is unmatched in India for OEM-grade harnesses. Their engineering team is technically excellent (Sumitomo Electric partnership for 40+ years) and they will do co-development for new platforms. BUT: they are not in the aftermarket harness business. Replacement harnesses for older vehicles are sourced from secondary MSSL distributors or from smaller players like Pricol or ASK Automotive.
+
+For EV components: MSSL has moved aggressively into high-voltage harnesses (400V and 800V) through their Motherson Advanced Wiring Solutions division. If you are an EV OEM or TIER-2 in the EV supply chain, MSSL is a critical conversation.
+
+Procurement reality: Becoming a Motherson supplier requires IS/TS 16949 certification minimum. Their supplier qualification process takes 6-9 months. Payment terms are net 45-60 days which is tough for SMEs.
+
+For aftermarket buyers: do not go direct to MSSL - use their authorized distributors. Direct MOQ is typically 500 harness units per part number.',
+  'business_types': ['Manufacturer', 'Tier-1 Automotive Supplier', 'Exporter',],
+  'key_products': [
+    'Automotive Wiring Harnesses',
+    'High Voltage EV Wiring Harnesses',
+    'Injection Moulded Plastic Parts',
+    'Exterior Mirrors (SMRPBV JV)',
+    'Polymer Components',
+    'Air Filters and Cooling Systems',
+    'LED Automotive Lighting',
+  ]
+  'years_in_business': 35,
+  'certifications': ['IATF 16949:2016', 'ISO 9001:2015', 'ISO 14001:2015', 'ISO 45001:2018', 'VDA 6.3 Audited',]
+  'website': 'https://www.motherson.com',
+  'address': 'Motherson Corporate Office, 2nd Floor, C-1 Sector 1, Noida - 201301, Uttar Pradesh, India',
+  'fit_score': 68.0,
+  'llm_phones': ['+91-120-674-5100', '+91-120-674-5101',]
+  'llm_landlines': ['+91-120-674-5000',],
+  'llm_emails': ['investors@motherson.com', 'procurement@motherson.com', 'info@motherson.com',]
+}

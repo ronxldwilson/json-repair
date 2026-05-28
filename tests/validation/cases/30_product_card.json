@@ -1,0 +1,64 @@
+// CNC Turning Center - BFW (Bharat Fritz Werner)
+// WARNING: output truncated at 4096 tokens - check closing brace
+{
+  vendor: "Bharat Fritz Werner Limited",
+  product: "BFW Ace Turn 25 CNC Turning Center",
+  specs: {
+    // Spindle specs
+    "Spindle Speed": "4500 RPM max",
+    "Spindle Bore": "52mm",
+    "Chuck Size": "200mm (8 inch) 3-jaw hydraulic",
+    "Max Turning Diameter": "250mm",
+    "Max Turning Length": "500mm",
+    // Axis travel
+    "X-Axis Travel": "160mm",
+    "Z-Axis Travel": "530mm",
+    "X-Axis Rapid": "24 m/min",
+    "Z-Axis Rapid": "30 m/min",
+    // Tooling and control
+    "Turret Stations": "12-station VDI 30",
+    "CNC Control": "Fanuc 0i-TF Plus",
+    "Bar Capacity": "42mm diameter",
+    // Power and utilities
+    "Spindle Motor": "11/15 kW (cont/30min)",
+    "Total Power": "25 kVA",
+    "Coolant Tank": "260 litres",
+    "Machine Weight": "4200 kg",
+  },
+  description: "The BFW Ace Turn 25 is a high-rigidity slant-bed CNC turning center manufactured at BFW plant in Bangalore. " +
+    "Designed for precision turning of automotive, aerospace, and general engineering components. " +
+    "The Fanuc 0i-TF Plus control offers nano-interpolation for sub-micron surface finish. " +
+    "Built on a Meehanite-cast one-piece slant bed for vibration damping.",
+  price_range: "₹38,00,000 - ₹42,00,000 (ex-factory, ex-GST)",
+  price_reasoning: "BFW factory price list Q3 2024: base machine ₹38.5 lakh, with auto bar feeder ₹41.8 lakh. Comparable Taiwanese (Fair Friend) machine is ₹34 lakh but 6 month import lead time vs 8 weeks for BFW.",
+  price_source_url: "https://www.bfwindia.com/cnc-turning-centers/ace-turn-25",
+  availability: "8-10 weeks lead time (built-to-order)",
+  warranty: "1 year comprehensive + 2 years spindle warranty",
+  moq: "1 unit",
+  delivery: "8-10 weeks from order confirmation",
+  certifications: ["ISO 9001:2015", "CE Marked", "CMTI Tested",],
+  email: "sales@bfwindia.com",
+  phone: "+91-80-2783-3000",
+  manufacturer_info: "Bharat Fritz Werner Limited (BFW), joint venture between Bharat Heavy Electricals and Fritz Werner GmbH (Germany), established 1961. India premier machine tool manufacturer with plants in Bangalore and Hosur. Annual capacity 3,000+ machines.",
+  pros: [
+    "Made in India - faster delivery vs imported machines",
+    "Fanuc 0i-TF Plus control - most widely supported CNC in India",
+    "8 inch hydraulic chuck standard - no upgrade needed",
+    "BFW service network in 28 cities",
+    "Meehanite cast bed - superior vibration damping",
+    "CMTI tested and certified",
+  ],
+  cons: [
+    "Premium over comparable Taiwanese imports by 10-15%",
+    "Bar capacity 42mm is limiting for larger diameter work",
+    "No Y-axis option available in this model",
+    "Coolant filtration system sold separately",
+  ],
+  score_spec_depth: 28,
+  score_brand: 19,
+  matches_query: True,
+  product_image_urls: [
+    "https://www.bfwindia.com/media/ace-turn-25-main.jpg",
+    "https://www.bfwindia.com/media/ace-turn-25-control.jpg",
+    "https://www.bfwindia.com/media/ace-turn-25-spindle.jpg",
+  ],

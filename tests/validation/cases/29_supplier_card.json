@@ -1,0 +1,23 @@
+{
+  'name': 'Vardhman Textiles Limited',
+  'description': 'Vardhman Textiles is one of India largest integrated textile manufacturers, producing cotton yarn, fabric, sewing thread, and acrylic fibre. Headquartered in Ludhiana, Punjab, the company operates 25+ manufacturing units across Punjab, Himachal Pradesh, Rajasthan, and Madhya Pradesh. Annual turnover exceeds ₹9,000 crore (FY2024). Exports to 65+ countries including USA, Europe, and Japan.',
+  'honest_assessment': 'Vardhman is the benchmark supplier for combed cotton yarn and woven fabric in India - if you need consistent 40s, 60s, or 80s count combed yarn in large volumes, they are the first call.
+
+Their yarn quality consistency is genuinely exceptional - lot-to-lot CV% is among the lowest in the industry, which matters enormously for downstream knitters and weavers who cant afford shade variation. The Mahavir Spinning division produces some of the finest compact spun yarn available domestically.
+
+That said, Vardhman is not a flexible supplier. Their minimum order for yarn is typically 1 tonne per count per shade, and their fabric minimum is 3,000 metres per design. Small garment exporters or boutique fashion brands will get poor attention - they are geared for volume customers.
+
+Lead times for dyed yarn are 4-6 weeks. Grey fabric is quicker at 2-3 weeks. Payment terms are strictly 30 days for new buyers - no credit until 6+ months relationship.
+
+Pricing is 8-12% above smaller Tirupur or Ichalkaranji mills but the quality premium is justified for export-quality end products where rejection rates matter.',
+  'business_types': ['Manufacturer', 'Exporter',]
+  'key_products': ['Combed Cotton Yarn (20s to 120s)', 'Compact Spun Yarn', 'Melange Yarn', 'Acrylic Yarn', 'Woven Fabric (Grey and Processed)', 'Sewing Thread', 'Dyed Yarn',]
+  'years_in_business': 60,
+  'certifications': ['ISO 9001:2015', 'GOTS Certified', 'OEKO-TEX Standard 100', 'BCI (Better Cotton Initiative)', 'ZDHC Member', 'Sedex Registered',]
+  'website': 'https://www.vardhman.com',
+  'address': 'Chandigarh Road, Ludhiana - 141010, Punjab, India',
+  'fit_score': 85.5,
+  'llm_phones': ['+91-161-222-7001', '+91-161-222-7002',]
+  'llm_landlines': ['+91-161-222-7000',]
+  'llm_emails': ['marketing@vardhman.com', 'exports@vardhman.com', 'yarn.sales@vardhman.com', 'fabric.sales@vardhman.com',]
+}

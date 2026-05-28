@@ -1,0 +1,61 @@
+// Industrial ball valve - L&T Valves
+// Kitchen sink test: lots of error types stacked
+/* Generated with temperature=0.9 */
+Here is the complete product card for the requested valve:
+
+```json
+{
+  vendor: "L&T Valves Limited"
+  "product": "L&T 6 inch Full Bore Ball Valve - Class 150 Carbon Steel"
+  specs: {
+    "Valve Type": "Full Bore Ball Valve"
+    "Size": "6 inch (DN150)"
+    "Pressure Class": "ANSI Class 150 (PN 20)"
+    "Body Material": "A216 WCB Carbon Steel"
+    "Ball Material": "A182 F316 Stainless Steel"
+    "Seat": "PTFE + ENP Coated"
+    "Stem": "A182 F316 Stainless Steel, blow-out proof"
+    "End Connections": "Flanged RF (Raised Face) ASME B16.5"
+    "Face to Face": "ASME B16.10 Short Pattern"
+    "Operating Temp": "-29C to +180C"
+    "Cv Value": "750"
+    "Actuator Mounting": "ISO 5211 - F14"
+    "Test Standard": "API 598"
+  }
+  "description": "The L&T 6 inch full bore ball valve is a workhorse for oil & gas, chemical, and water treatment applications across India. Full bore design means zero pressure drop and allows pigging operations in pipeline applications. The flanged RF ends match directly to ASME B16.5 Class 150 piping without reducers."
+  "price_range": "₹28,000 - ₹35,000 per valve (ex-GST, ex-factory)"
+  price_reasoning: "L&T distributor (Mumbai) quote ₹28,500 for 10+ units. IndiaMART sellers range ₹26,000-₹34,000. Import equivalent (Chinese WCB) ₹18,000 but quality inconsistency reported. Chose domestic distributor price."
+  price_source_url: "https://www.ltvalves.com/ball-valves/6-class150-wcb"
+  "availability": "Ready Stock (standard carbon steel) - SS body 3 week lead time"
+  "warranty": "12 months from date of installation or 18 months from date of supply"
+  moq: "1 piece"
+  "delivery": "Ready stock: 5-7 days. 3 week for SS trim variants."
+  "certifications": ["API 6D", "API 598", "ASME B16.34", "ISO 9001:2015", "ISO 14001:2015", "IBR Approved", "PED 2014/68/EU",]
+  email: "valves@lntecc.com"
+  "phone": "+91-44-6759-4567"
+  manufacturer_info: "L&T Valves Limited is a wholly owned subsidiary of Larsen & Toubro, India largest engineering conglomerate. Manufacturing plant at Coimbatore (Tamil Nadu) with capacity for 50,000+ valves annually. Established 1997. Exports to Middle East, Africa, and SE Asia. API 6D and ASME certified facility."
+  "pros": [
+    "L&T brand - accepted in all major Indian PSU tenders (ONGC, IOCL, BPCL)",
+    "Full bore - no flow restriction, piggable pipelines",
+    "IBR approval for steam service up to 180C",
+    "API 6D certified - mandatory for oil & gas sector",
+    "ISO 5211 actuator mount - easy pneumatic or electric actuator addition",
+    "Made in India - faster delivery and support vs imports",
+  ]
+  "cons": [
+    "30-50% costlier than equivalent Chinese imports",
+    "Carbon steel not suitable above 180C - need alloy steel for high temp",
+    "No emergency sealant injection fitting in standard version",
+  ]
+  score_spec_depth: 29
+  score_brand: 24
+  "matches_query": True
+  product_image_urls: [
+    "https://www.ltvalves.com/media/ball-valve-6inch-main.jpg",
+    "https://www.ltvalves.com/media/ball-valve-cutaway.jpg",
+    "https://www.ltvalves.com/media/ball-valve-dimensions.jpg",
+  ]
+}
+```
+
+Note: Price is ex-factory Coimbatore. Add 5-8% freight for Mumbai/Delhi delivery.
