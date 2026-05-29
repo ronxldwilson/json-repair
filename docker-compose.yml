@@ -5,6 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile.llama
     platform: linux/amd64
+    command: ["--model", "/models/qwen2.5-coder-1.5b-instruct-q5_k_m.gguf", "--host", "0.0.0.0", "--port", "8776", "-t", "3", "-c", "8192", "--temp", "0", "-np", "8"]
     deploy:
       resources:
         limits:

@@ -16,7 +16,7 @@ docker compose up -d
 ```
 
 Two containers:
-- **llama** — llama-server with model baked in (~1.4 GB RAM)
+- **llama** — llama-server with 8 parallel inference slots (~283 MB RAM)
 - **api** — FastAPI service on port 8080
 
 ### Using an external LLM API (Groq, OpenAI, Together, etc.)
@@ -192,10 +192,9 @@ Without a schema, the GBNF grammar enforces valid JSON syntax but the 1.5B model
 
 | Metric | Value |
 |---|---|
-| Model RAM | ~1.4 GB |
-| KV cache (during inference) | ~23 MB |
+| Llama container RAM | ~283 MB (8 slots × 1024 ctx) |
 | Deterministic repair | <1ms |
-| LLM repair | ~3-30s (4 vCPU) |
+| LLM repair | ~5-40s (3 threads, 8 slots) |
 | Docker image (llama) | ~1.4 GB |
 | Docker image (api) | ~200 MB |
 
@@ -215,6 +214,56 @@ Without a schema, the GBNF grammar enforces valid JSON syntax but the 1.5B model
 ronxldwilson/json-repair:llama  # llama-server + model
 ronxldwilson/json-repair:api    # FastAPI service
 ```
+
+## Performance tuning
+
+The llama container runs with 8 parallel inference slots (`-np 8`) and a total context of 8192 tokens (`-c 8192`), giving each slot 1024 tokens. This configuration was chosen based on load testing:
+
+### Why 8 slots instead of 4
+
+The model weights (~1.1 GB) are loaded once and shared read-only across all slots. Each slot only needs its own KV cache (~12 MB at 1024 context). Doubling slots from 4 to 8 costs ~96 MB extra KV cache but doubles concurrent capacity.
+
+| Config | Slots | Context/slot | RAM | 16 concurrent LLM |
+|---|---|---|---|---|
+| Old (4 slots, 4096 ctx) | 4 | 4096 | 984 MB | 14/16 pass (2 timeouts) |
+| **New (8 slots, 8192 ctx)** | **8** | **1024** | **283 MB** | **16/16 pass** |
+
+### Concurrent load test results
+
+Tested with 8 hard cases (scrambled keys, nested corruption, YAML-ish, HTML-contaminated, etc.) that all require full LLM repair:
+
+| Concurrency | Pass rate | Wall time | Throughput |
+|---|---|---|---|
+| 1 (sequential) | 8/8 | 125s | 0.06 req/s |
+| 8 concurrent | 8/8 | 93s | 0.09 req/s |
+| 16 concurrent | 16/16 | 113s | 0.14 req/s |
+| 24 concurrent | 16/24 | 120s | 0.20 req/s |
+
+Deterministic requests (98% of real traffic) are unaffected by LLM load — they return in <1ms regardless of how many LLM requests are queued. At 100 concurrent deterministic requests: 420 req/s with p95 of 223ms (network-bound).
+
+The 24-concurrent ceiling is CPU-bound (3 threads generating tokens for 18 LLM requests simultaneously). The 120s timeout catches the slowest requests. For higher throughput, increase CPU allocation or offload to an external API.
+
+### Tuning the slot/context tradeoff
+
+| Flag | Effect | Guidance |
+|---|---|---|
+| `-np N` | Number of parallel inference slots | More slots = more concurrent requests, but each gets less CPU time |
+| `-c N` | Total context window (divided across slots) | 1024/slot is sufficient for JSON repair. Increase if repairing very large JSON (>4KB) |
+| `-t N` | CPU threads for inference | Set to (cores - 1) to leave headroom for other services |
+
+To override without rebuilding the image, set `command:` in docker-compose.yml.
+
+### Load test scripts
+
+```bash
+# Deterministic + light LLM load test
+python tests/loadtest.py <url> [api-key]
+
+# Heavy LLM stress test (8 hard cases, phases 1-4)
+python tests/stress_llm.py <url> [api-key]
+```
+
+Both scripts can also be configured via `LOADTEST_URL` and `LOADTEST_API_KEY` env vars.
 
 ## Design decisions
 
