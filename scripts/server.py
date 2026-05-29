@@ -42,12 +42,14 @@ async def lifespan(app: FastAPI):
             completions_url=f"{EXTERNAL_API_URL}/chat/completions",
             api_key=EXTERNAL_API_KEY,
             model=EXTERNAL_MODEL,
+            deterministic_repair_fn=deterministic_repair,
         )
     else:
         configure(
             provider="local",
             completions_url=f"{LLAMA_URL}/v1/chat/completions",
             completion_url=f"{LLAMA_URL}/completion",
+            deterministic_repair_fn=deterministic_repair,
         )
         wait_for_server(HEALTH_URL)
     yield
@@ -84,11 +86,17 @@ def repair(req: RepairRequest):
         if coerced and validate_against_schema(coerced, schema):
             return RepairResponse(repaired_json=coerced, valid=True, method="deterministic+coerce")
 
-    # 3. Targeted snippet repair
+    # 3. Targeted snippet repair (with deterministic cleanup after each round)
     try:
         snippet_result, rounds = iterative_snippet_repair(deterministic_result)
-        if rounds > 0 and validate_against_schema(snippet_result, schema):
-            return RepairResponse(repaired_json=snippet_result, valid=True, method=f"snippet({rounds})")
+        if rounds > 0:
+            snippet_result = deterministic_repair(snippet_result)
+            if validate_against_schema(snippet_result, schema):
+                return RepairResponse(repaired_json=snippet_result, valid=True, method=f"snippet({rounds})")
+            if schema:
+                coerced = coerce_schema_errors(snippet_result, schema)
+                if coerced and validate_against_schema(coerced, schema):
+                    return RepairResponse(repaired_json=coerced, valid=True, method=f"snippet({rounds})+coerce")
     except Exception:
         pass
 

@@ -16,10 +16,12 @@ _completions_url = None
 _completion_url = None
 _api_key = None
 _model = None
+_deterministic_repair = None
 
 
 def configure(provider: str, completions_url: str, completion_url: str | None = None,
-              api_key: str | None = None, model: str | None = None):
+              api_key: str | None = None, model: str | None = None,
+              deterministic_repair_fn=None):
     """Set the LLM backend config. Called once at startup from server.py.
 
     provider="local"    → uses llama-server (completion + chat/completions endpoints)
@@ -30,12 +32,13 @@ def configure(provider: str, completions_url: str, completion_url: str | None = 
                   completions_url="https://api.groq.com/openai/v1/chat/completions",
                   api_key="gsk_...", model="llama-3.3-70b-versatile")
     """
-    global _provider, _completions_url, _completion_url, _api_key, _model
+    global _provider, _completions_url, _completion_url, _api_key, _model, _deterministic_repair
     _provider = provider
     _completions_url = completions_url
     _completion_url = completion_url
     _api_key = api_key
     _model = model
+    _deterministic_repair = deterministic_repair_fn
 
 
 def _post(url: str, body: dict, timeout: int = 120) -> dict:
@@ -280,5 +283,7 @@ def iterative_snippet_repair(text: str, max_rounds: int = 5) -> tuple[str, int]:
             return text, round_num - 1
         except json.JSONDecodeError as e:
             text = repair_snippet(text, e)
+            if _deterministic_repair:
+                text = _deterministic_repair(text)
 
     return text, max_rounds
