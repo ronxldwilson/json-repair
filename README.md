@@ -16,7 +16,7 @@ docker compose up -d
 ```
 
 Two containers:
-- **llama** — llama-server with 8 parallel inference slots (~283 MB RAM)
+- **llama** — llama-server with 8 parallel inference slots, auto-sleeps after 60s idle (~800 MB warm, ~150 MB sleeping)
 - **api** — FastAPI service on port 8080
 
 ### Using an external LLM API (Groq, OpenAI, Together, etc.)
@@ -192,9 +192,11 @@ Without a schema, the GBNF grammar enforces valid JSON syntax but the 1.5B model
 
 | Metric | Value |
 |---|---|
-| Llama container RAM | ~283 MB (8 slots × 1024 ctx) |
+| Llama container RAM (warm) | ~800 MB (8 slots × 3072 ctx) |
+| Llama container RAM (sleeping) | ~150 MB (model unloaded after 60s idle) |
+| Wake-up latency (first request after sleep) | ~3s |
 | Deterministic repair | <1ms |
-| LLM repair | ~5-40s (3 threads, 8 slots) |
+| LLM repair | ~2-40s (3 threads, 8 slots) |
 | Docker image (llama) | ~1.4 GB |
 | Docker image (api) | ~200 MB |
 
@@ -248,8 +250,9 @@ The 24-concurrent ceiling is CPU-bound (3 threads generating tokens for 18 LLM r
 | Flag | Effect | Guidance |
 |---|---|---|
 | `-np N` | Number of parallel inference slots | More slots = more concurrent requests, but each gets less CPU time |
-| `-c N` | Total context window (divided across slots) | 1024/slot is sufficient for JSON repair. Increase if repairing very large JSON (>4KB) |
+| `-c N` | Total context window (divided across slots) | 3072/slot handles most JSON. Increase for very large payloads |
 | `-t N` | CPU threads for inference | Set to (cores - 1) to leave headroom for other services |
+| `--sleep-idle-seconds N` | Unload model weights after N seconds idle | Frees ~650 MB RAM; first request after sleep takes ~3s to reload. Set to -1 to disable |
 
 To override without rebuilding the image, set `command:` in docker-compose.yml.
 
@@ -269,5 +272,5 @@ Both scripts can also be configured via `LOADTEST_URL` and `LOADTEST_API_KEY` en
 
 - **Deterministic first** — regex/string parser handles ~98% of cases in <1ms, LLM is a fallback
 - **No thinking/reasoning models** — pure autoregressive (Qwen2.5-Coder), prompt-in/JSON-out
-- **llama-server over llama-cli** — model loads once, stays in RAM, each repair is an HTTP call
+- **llama-server over llama-cli** — model loads once, stays in RAM, each repair is an HTTP call. Auto-sleeps after 60s idle (`--sleep-idle-seconds 60`) to free ~650 MB; wakes in ~3s on next request
 - **Grammar constraint is essential** — `json_schema` response format forces valid JSON at the token generation level
