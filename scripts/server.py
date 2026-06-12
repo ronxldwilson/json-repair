@@ -18,6 +18,7 @@ from scripts.llm import (
     iterative_snippet_repair,
     repair_with_grammar,
     repair_with_schema,
+    warmup_model,
     wait_for_server,
 )
 
@@ -111,6 +112,19 @@ def repair(req: RepairRequest):
 
     valid = validate_against_schema(repaired, schema)
     return RepairResponse(repaired_json=repaired, valid=valid, method="llm")
+
+
+@app.post("/warmup")
+def warmup():
+    if LLM_PROVIDER == "external":
+        return {"status": "ok", "message": "external provider, no warmup needed"}
+    if not check_health(HEALTH_URL):
+        raise HTTPException(status_code=503, detail="llama-server not reachable")
+    try:
+        warmup_model()
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"warmup inference failed: {e}")
+    return {"status": "ok", "message": "model loaded and ready"}
 
 
 @app.get("/health")

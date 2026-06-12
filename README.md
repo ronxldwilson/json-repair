@@ -77,6 +77,21 @@ Response:
 
 The `method` field tells you which tier resolved it: `deterministic`, `deterministic+coerce`, `snippet(N)`, or `llm`.
 
+### `POST /warmup`
+
+Pre-load model weights into memory so subsequent repair requests don't pay the ~3s cold-start cost. Useful when the llama container is configured with `--sleep-idle-seconds` and you know a repair request is coming soon.
+
+```bash
+curl -X POST http://localhost:8080/warmup
+```
+
+Response:
+```json
+{"status": "ok", "message": "model loaded and ready"}
+```
+
+No-op when using an external LLM provider.
+
 ### `GET /health`
 
 ```bash

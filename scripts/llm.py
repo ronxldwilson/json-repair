@@ -118,6 +118,20 @@ def check_health(health_url: str) -> bool:
         return False
 
 
+def warmup_model():
+    """Send a minimal completion request to force llama-server to load model weights.
+
+    When --sleep-idle-seconds is set, the server unloads weights after idle time.
+    This triggers a reload so subsequent repair requests don't pay the cold-start cost.
+    """
+    body = {
+        "prompt": "<|im_start|>system\nhi<|im_end|>\n<|im_start|>assistant\n",
+        "temperature": 0,
+        "n_predict": 1,
+    }
+    _post(_completion_url, body, timeout=30)
+
+
 def repair_with_schema(broken_text: str, schema: dict) -> str:
     """Full LLM repair using json_schema response format to guarantee structure.
 
